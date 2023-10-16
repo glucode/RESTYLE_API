@@ -16,7 +16,7 @@ def default_hi():
     print("Hi, there!")
     return {"message": "Aloha"}
 
-@app.routes('/classify')
+@app.route('/classify')
 def classify(request):
     data=request.FILES['image']
     response = requests.post(API_URL, headers=headers, data=data)
