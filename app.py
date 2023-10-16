@@ -17,20 +17,26 @@ def default_hi():
     print("Hi, there!")
     return {"message": "Aloha"}
 
+
 @app.route('/classify', methods=['POST'])
 def classify():
     mage=request.files['image']
     output = query(mage)
     return output,200
 
+@app.route('/generate', methods=['POST'])
+def generate():
+    return jsonify(message="Generated")
+
+
 @app.route('/not_found')
 def not_fount():
     return jsonify(message="That response was not found"), 404 
 
-def query(filename):
-    response = requests.post(API_URL, headers=headers, data=filename)
-    return response.json()
-
 
 if __name__ == '__main__':
     app.run(debug=True,port=8001)
+    
+def query(filename):
+    response = requests.post(API_URL, headers=headers, data=filename)
+    return response.json()
