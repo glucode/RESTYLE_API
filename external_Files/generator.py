@@ -214,6 +214,7 @@ def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=
         outfit = base + accessories
         accessories[:3]
         outfits.add(outfit)
+        #Convert the outfit images to base64
     return list(outfits)
 class Generator():
 
@@ -241,8 +242,8 @@ class Generator():
         return 0
     
     # Generate outfits and structure them as a dictionary
-    def start_genertation():
-        reference_item = df[df["Subcategory"].str.contains("Tops", case=False, na=False)].sample(n=1).iloc[0]
+    def start_genertation(categoryName):
+        reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
         outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Women")
         output_dict = {reference_item_title: outfit_combinations_regression_v5_urls}

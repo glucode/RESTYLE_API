@@ -31,7 +31,8 @@ def classify():
 
 @app.route('/generate', methods=['GET'])
 def generate():
-    generated_result = generator.Generator.start_genertation()
+    name = request.args.get('name')
+    generated_result = generator.Generator.start_genertation(name)
     return generated_result
 
 
