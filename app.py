@@ -3,6 +3,7 @@ from flask import jsonify
 import os
 from flask_marshmallow import Marshmallow
 import requests
+from external_Files import generator
 
 app = Flask(__name__)
 
@@ -10,6 +11,10 @@ app = Flask(__name__)
 API_KEY = os.environ.get('BEARER_KEY')
 API_URL = "https://api-inference.huggingface.co/models/timm/mobilenetv3_large_100.ra_in1k"
 headers = {"Authorization": "Bearer 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"}
+
+def query(filename):
+    response = requests.post(API_URL, headers=headers, data=filename)
+    return response.json()
 
 
 @app.route('/')
@@ -24,9 +29,10 @@ def classify():
     output = query(mage)
     return output,200
 
-@app.route('/generate', methods=['POST'])
+@app.route('/generate', methods=['GET'])
 def generate():
-    return jsonify(message="Generated")
+    generated_result = generator.Generator.start_genertation()
+    return generated_result
 
 
 @app.route('/not_found')
@@ -37,6 +43,3 @@ def not_fount():
 if __name__ == '__main__':
     app.run(debug=True,port=8001)
     
-def query(filename):
-    response = requests.post(API_URL, headers=headers, data=filename)
-    return response.json()

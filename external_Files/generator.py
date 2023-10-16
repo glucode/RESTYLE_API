@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
 # 1. Data Loading and Preprocessing
-df = pd.read_csv("Intelistyle_files/Demo_metadata.csv", delimiter=";", on_bad_lines='skip')
+df = pd.read_csv("external_files/Dataset/Demo_metadata.csv", delimiter=";", on_bad_lines='skip')
 df["Season"] = df["Season"].apply(lambda x: x.split(", ") if isinstance(x, str) else [])
-image_folder = "Intelistyle_files/Demo_dataset_brand_agnostic"
+image_folder = "external_files/Dataset_images"
 
 # 2. Complementary, Matching, and Seasonal colors definitions
 seasonal_colors = {
@@ -197,6 +197,24 @@ mae_test = mean_absolute_error(y_test_sample, y_pred_test)
 # print(f'Training MSE: {mse_train}, Testing MSE: {mse_test}')
 # print(f'Training R2: {r2_train}, Testing R2: {r2_test}')
 # print(f'Training MAE: {mae_train}, Testing MAE: {mae_test}')
+
+def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=30):
+    base_categories = ["tops", "trousers", "shoes"]
+    accessory_categories = ["jewellery", "bags", "caps", "belts", "socks", "bracelets", "eyewear"]
+
+    base_items = get_top_similar_items_regression_fixed(reference_item, df, base_categories, compute_advanced_similarity_v3_updated)
+    accessory_items = get_top_similar_items_regression_fixed(reference_item, df, accessory_categories, compute_advanced_similarity_v3_updated)
+
+    outfits = set()
+    while len(outfits) < max_outfits:
+        base = tuple([generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories])
+        accessory_count = random.randint(0, len(accessory_items))
+        chosen_accessories = random.sample(accessory_categories, accessory_count)
+        accessories = tuple([generate_url(random.choice(accessory_items[category])["Product ID"]) for category in chosen_accessories])
+        outfit = base + accessories
+        accessories[:3]
+        outfits.add(outfit)
+    return list(outfits)
 class Generator():
 
 
@@ -222,36 +240,21 @@ class Generator():
                 return 0.5  # Triadic or Tetradic
         return 0
     
-    def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=30):
-        base_categories = ["tops", "trousers", "shoes"]
-        accessory_categories = ["jewellery", "bags", "caps", "belts", "socks", "bracelets", "eyewear"]
-
-        base_items = get_top_similar_items_regression_fixed(reference_item, df, base_categories, compute_advanced_similarity_v3_updated)
-        accessory_items = get_top_similar_items_regression_fixed(reference_item, df, accessory_categories, compute_advanced_similarity_v3_updated)
-
-        outfits = set()
-        while len(outfits) < max_outfits:
-            base = tuple([generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories])
-            accessory_count = random.randint(0, len(accessory_items))
-            chosen_accessories = random.sample(accessory_categories, accessory_count)
-            accessories = tuple([generate_url(random.choice(accessory_items[category])["Product ID"]) for category in chosen_accessories])
-            outfit = base + accessories
-            accessories[:3]
-            outfits.add(outfit)
-        return list(outfits)
-
     # Generate outfits and structure them as a dictionary
-    reference_item = df[df["Subcategory"].str.contains("Tops", case=False, na=False)].sample(n=1).iloc[0]
-    reference_item_title = reference_item["Product Title"]
-    outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Women")
-    output_dict = {reference_item_title: outfit_combinations_regression_v5_urls}
+    def start_genertation():
+        reference_item = df[df["Subcategory"].str.contains("Tops", case=False, na=False)].sample(n=1).iloc[0]
+        reference_item_title = reference_item["Product Title"]
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Women")
+        output_dict = {reference_item_title: outfit_combinations_regression_v5_urls}
+        return output_dict
+        # output_path = "outfit_combinations.json"
+        # with open(output_path, 'w') as outfile:
+        #     return outfile
 
     # Save the dictionary as a JSON file
-    output_path = "outfit_combinations.json"
-    with open(output_path, 'w') as outfile:
-        json.dump(output_dict, outfile)
 
-    output_path
+
+    # output_path
 
     def display_outfit_combinations(json_path, img_folder= image_folder):
         # Load the JSON file
