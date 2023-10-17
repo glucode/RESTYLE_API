@@ -3,19 +3,13 @@ from flask import jsonify
 import os
 from flask_marshmallow import Marshmallow
 import requests
-from external_Files import generator
+from external_Files import generator 
+from external_Files import clasification
+import torch
 
 app = Flask(__name__)
-
-# Classifier API
-API_KEY = os.environ.get('BEARER_KEY')
-API_URL = "https://api-inference.huggingface.co/models/timm/mobilenetv3_large_100.ra_in1k"
-headers = {"Authorization": "Bearer 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"}
-
-def query(filename):
-    response = requests.post(API_URL, headers=headers, data=filename)
-    return response.json()
-
+# Model
+model = torch.load('pytorch_model.bin', map_location=torch.device('cpu'))
 
 @app.route('/')
 def default_hi():
@@ -25,21 +19,22 @@ def default_hi():
 
 @app.route('/classify', methods=['POST'])
 def classify():
-    mage=request.files['image']
-    output = query(mage)
+    image=request.files['image']
+    output = clasification.ClothingIdentifier.identify(image)
     return output,200
 
-@app.route('/generate_with_names', methods=['GET'])
+@app.route('/generate', methods=['GET'])
 def generate():
     name = request.args.get('name')
-    generated_result = generator.Generator.start_genertation(name)
-    return generated_result
+    output = generator.Generator.start_genertation(name)
+    return output,200
 
-@app.route('/generate_with_image', methods=['GET'])
-def generate():
+@app.route('/generate_html_list',methods=['GET'])
+def generate_html_list():
     name = request.args.get('name')
-    generated_result = generator.Generator.start_genertation(name)
-    return generated_result
+    output = generator.Generator.start_genertation_html(name)
+    return output,200
+
 
 @app.route('/not_found')
 def not_fount():

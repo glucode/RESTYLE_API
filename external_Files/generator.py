@@ -9,6 +9,7 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import base64
 
 # 1. Data Loading and Preprocessing
 df = pd.read_csv("external_files/Dataset/Demo_metadata.csv", delimiter=";", on_bad_lines='skip')
@@ -47,7 +48,19 @@ base_category_constraints = {
     "trousers": ["pants", "shorts", "denim", "jeans"],
     "shoes": ["slides", "trainers", "boots", "sandals", "heels", "slip-ons"]
 }
+def encode_image_to_base64(image_path):
+    with open(image_path, 'rb') as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    return encoded_string.decode('utf-8')
 
+# def generate_url(product_id, folder_path=image_folder):
+#     for filename in os.listdir(folder_path):
+#         if product_id in filename:
+#             file_path = os.path.join(folder_path, filename)
+#             with open(file_path, "rb") as image_file:
+#                 encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+#             return encoded_string
+#     return None  # Return None if no matching file is found
 
 # 4. Functions to compute similarity
 def compute_similarity(item1, item2):
@@ -117,7 +130,7 @@ def get_top_similar_items_regression_fixed(reference_item, df, categories, simil
 def generate_url(product_id, folder_path=image_folder):
     for filename in os.listdir(folder_path):
         if product_id in filename:
-            return filename
+            return f"https://firebasestorage.googleapis.com/v0/b/restyle-fbd67.appspot.com/o/demodataset%2F{filename}?alt=media"
     return product_id
 
 def compute_advanced_similarity_v3_updated(item1, item2):
@@ -202,23 +215,34 @@ def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=
     base_categories = ["tops", "trousers", "shoes"]
     accessory_categories = ["jewellery", "bags", "caps", "belts", "socks", "bracelets", "eyewear"]
 
+    # Identify the main category of the reference item
+    reference_subcategory = reference_item["Subcategory"]
+    reference_main_category = None
+    for category, subcategories in base_category_constraints.items():
+        if reference_subcategory.lower() in [sub.lower() for sub in subcategories]:
+            reference_main_category = category
+            break
+
     base_items = get_top_similar_items_regression_fixed(reference_item, df, base_categories, compute_advanced_similarity_v3_updated)
     accessory_items = get_top_similar_items_regression_fixed(reference_item, df, accessory_categories, compute_advanced_similarity_v3_updated)
 
     outfits = set()
     while len(outfits) < max_outfits:
-        base = tuple([generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories])
+        base = [generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories]
+        
+        # Replace the item in the outfit that matches the main category of the reference item with the reference item
+        if reference_main_category:
+            base[base_categories.index(reference_main_category)] = generate_url(reference_item["Product ID"])
+        
         accessory_count = random.randint(0, len(accessory_items))
         chosen_accessories = random.sample(accessory_categories, accessory_count)
-        accessories = tuple([generate_url(random.choice(accessory_items[category])["Product ID"]) for category in chosen_accessories])
-        outfit = base + accessories
+        accessories = [generate_url(random.choice(accessory_items[category])["Product ID"]) for category in chosen_accessories]
         accessories[:3]
+        outfit = tuple(base + accessories)
         outfits.add(outfit)
-        #Convert the outfit images to base64
+        
     return list(outfits)
 class Generator():
-
-
     def compute_color_similarity_updated(item1, item2):
         color1 = item1["Colors"]
         color2 = item2["Colors"]
@@ -245,53 +269,55 @@ class Generator():
     def start_genertation(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Women")
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Men")
         output_dict = {reference_item_title: outfit_combinations_regression_v5_urls}
         return output_dict
-        # output_path = "outfit_combinations.json"
-        # with open(output_path, 'w') as outfile:
-        #     return outfile
+    
+    
+    def start_genertation_html(categoryName):
+        reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+        reference_item_title = reference_item["Product Title"]
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Men")
+        # output_dict = {reference_item_title: outfit_combinations_regression_v5_urls}
 
-    # Save the dictionary as a JSON file
+            #  HTML generation
+        html_template = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Image Display</title>
+        </head>
+        <body>
+            <table border="1">
+                <tr>
+                    <th>Uploaded Image name</th>
+                    <th>Look</th>
+                </tr>
+                {}
+            </table>
+        </body>
+        </html>
+        """
+
+        image_template = """
+        <tr>
+            <td>{key}</td>
+            <td>
+                {images}
+            </td>
+        </tr>
+        """
+
+        image_tag_template = '<img src="{}" style="margin: 5px;object-fit: cover; width: 100px;">'
+
+        table_rows = ""
+        for combination in outfit_combinations_regression_v5_urls:
+            image_tags = "".join([image_tag_template.format(image) for image in combination])
+            table_rows += image_template.format(key=reference_item_title, images=image_tags)
+
+        final_html = html_template.format(table_rows)
+        return final_html
 
 
-    # output_path
-
-    def display_outfit_combinations(json_path, img_folder= image_folder):
-        # Load the JSON file
-        with open(json_path, 'r') as file:
-            outfit_combinations = json.load(file)
-
-        # Iterate through each reference item and its combinations
-        for reference_item, combinations in outfit_combinations.items():
-            # Display the reference item
-            print(f"Reference Item: {reference_item}")
-            
-            for idx, combination in enumerate(combinations, 1):
-                # Set up the subplot dimensions based on the number of items in the combination
-                n = len(combination)
-                ncols = 3  # For example, 3 columns: tops, trousers, shoes
-                nrows = -(-n // ncols)  # Calculate rows needed
-                
-                fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 3 * nrows))
-                
-                for ax, item in zip(axs.ravel(), combination):
-                    img_path = os.path.join(img_folder, item)
-                    img = mpimg.imread(img_path)
-                    ax.imshow(img)
-                    ax.axis('off')
-                    ax.set_title(item)
-                
-                # Remove any unused subplots
-                for ax in axs.ravel()[n:]:
-                    fig.delaxes(ax)
-                    
-
-                plt.tight_layout()
-                plt.show()
-                print(f"Outfit Combination {idx} displayed above\n")
-                
-        print("All outfit combinations displayed.")
 
 
-    # display_outfit_combinations("outfit_combinations.json")
