@@ -29,12 +29,17 @@ def classify():
     output = query(mage)
     return output,200
 
-@app.route('/generate', methods=['GET'])
+@app.route('/generate_with_names', methods=['GET'])
 def generate():
     name = request.args.get('name')
     generated_result = generator.Generator.start_genertation(name)
     return generated_result
 
+@app.route('/generate_with_image', methods=['GET'])
+def generate():
+    name = request.args.get('name')
+    generated_result = generator.Generator.start_genertation(name)
+    return generated_result
 
 @app.route('/not_found')
 def not_fount():
