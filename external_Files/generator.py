@@ -107,6 +107,55 @@ def get_top_similar_items_regression_fixed_with_constraints(reference_item, df, 
         category_items[category] = sorted_items[:top_n]
     return category_items
 
+def save_user_item_locally(user_image_file, save_path="external_files/User_Items/"):
+    """
+    Save the user's item locally.
+    
+    Parameters:
+    - user_image_file (File): The user's image file.
+    - save_path (str): The directory to save the image in.
+    
+    Returns:
+    - str: The path to the saved image.
+    """
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    
+    image_path = os.path.join(save_path, user_image_file.filename)
+    
+    user_image_file.save(image_path)
+    
+    return image_path
+
+def generate_outfits_with_user_item(refrence_category,user_image_file, df, gender, max_outfits=30):
+    # Save the user's item locally
+    user_item_path = save_user_item_locally(user_image_file)
+    
+    # Use the user's item as the reference item
+    reference_item = {"Product ID": refrence_category, "Image Path": user_item_path}  # Add other necessary attributes
+    
+    base_categories = ["tops", "trousers", "shoes"]
+    accessory_categories = ["jewellery", "bags", "caps", "belts", "socks", "bracelets", "eyewear"]
+
+    base_items = get_top_similar_items_regression_fixed(refrence_category, df, base_categories, compute_advanced_similarity_v3_updated)
+    accessory_items = get_top_similar_items_regression_fixed(refrence_category, df, accessory_categories, compute_advanced_similarity_v3_updated)
+
+    outfits = set()
+    while len(outfits) < max_outfits:
+        base = [generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories]
+        
+        # Replace the item in the outfit that matches the main category of the reference item with the user's item
+        base[base_categories.index(refrence_category)] = user_item_path  # Assuming the user's item is a "top". Modify as needed.
+        
+        accessory_count = random.randint(0, len(accessory_items))
+        chosen_accessories = random.sample(accessory_categories, accessory_count)
+        accessories = [generate_url(random.choice(accessory_items[category])["Product ID"]) for category in chosen_accessories]
+        accessories[:3]
+        outfit = tuple(base + accessories)
+        outfits.add(outfit)
+        
+    return list(outfits)
+
 def get_top_similar_items_regression_fixed(reference_item, df, categories, similarity_function, top_n=5):
     category_items = {}
     for category in categories:
@@ -242,6 +291,41 @@ def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=
         outfits.add(outfit)
         
     return list(outfits)
+
+
+def generate_outfits_regression_v6_urls(reference_item,user_image, df, gender, max_outfits=30):
+    base_categories = ["tops", "trousers", "shoes"]
+    accessory_categories = ["jewellery", "bags", "caps", "belts", "socks", "bracelets", "eyewear"]
+
+    # Identify the main category of the reference item
+    reference_subcategory = reference_item["Subcategory"]
+    reference_main_category = None
+    for category, subcategories in base_category_constraints.items():
+        if reference_subcategory.lower() in [sub.lower() for sub in subcategories]:
+            reference_main_category = category
+            break
+
+    base_items = get_top_similar_items_regression_fixed(reference_item, df, base_categories, compute_advanced_similarity_v3_updated)
+    accessory_items = get_top_similar_items_regression_fixed(reference_item, df, accessory_categories, compute_advanced_similarity_v3_updated)
+
+    outfits = set()
+    while len(outfits) < max_outfits:
+        base = [generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories]
+        
+        # Replace the item in the outfit that matches the main category of the reference item with the reference item
+        if reference_main_category:
+            base[base_categories.index(reference_main_category)] = user_image
+        
+        accessory_count = random.randint(0, len(accessory_items))
+        chosen_accessories = random.sample(accessory_categories, accessory_count)
+        accessories = [generate_url(random.choice(accessory_items[category])["Product ID"]) for category in chosen_accessories]
+        accessories[:3]
+        outfit = tuple(base + accessories)
+        outfits.add(outfit)
+        
+    return list(outfits)
+
+
 class Generator():
     def compute_color_similarity_updated(item1, item2):
         color1 = item1["Colors"]
@@ -273,14 +357,19 @@ class Generator():
         output_dict = {reference_item_title: outfit_combinations_regression_v5_urls}
         return output_dict
     
+    def generate_with_image(category_name, refrence_image):
+        reference_item = df[df["Subcategory"].str.contains(category_name, case=False, na=False)].sample(n=1).iloc[0]
+        reference_item_title = reference_item["Product Title"]
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item , df, "Men")
+        output_dict = {category_name: outfit_combinations_regression_v5_urls}
+        return output_dict
+    
     
     def start_genertation_html(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
         outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Men")
-        # output_dict = {reference_item_title: outfit_combinations_regression_v5_urls}
 
-            #  HTML generation
         html_template = """
         <!DOCTYPE html>
         <html>

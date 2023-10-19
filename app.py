@@ -5,11 +5,17 @@ from flask_marshmallow import Marshmallow
 import requests
 from external_Files import generator 
 from external_Files import clasification
-import torch
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 app = Flask(__name__)
-# Model
-model = torch.load('pytorch_model.bin', map_location=torch.device('cpu'))
+
+# # Firebase init
+# cred = credentials.Certificate("path/to/serviceAccountKey.json")
+# firebase_admin.initialize_app(cred)
+# firebase_db = firestore.client()
+
+
 
 @app.route('/')
 def default_hi():
@@ -25,8 +31,16 @@ def classify():
 
 @app.route('/generate', methods=['GET'])
 def generate():
-    name = request.args.get('name')
-    output = generator.Generator.start_genertation(name)
+    # image = request.files['image']
+    category = request.form['category']
+    output = generator.Generator.start_genertation(category)
+    return output,200
+
+@app.route('/generate_userimage', methods=['GET'])
+def generate_with_image():
+    image = request.files['image']
+    category = request.form['category']
+    output = generator.Generator.generate_with_image(category,image)
     return output,200
 
 @app.route('/generate_html_list',methods=['GET'])
