@@ -1,18 +1,20 @@
-import pandas as pd
+import os
 import random
 import json
-import os
+import base64
 from datetime import datetime
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import base64
 
 # 1. Data Loading and Preprocessing
-df = pd.read_csv("external_files/Dataset/Demo_metadata.csv", delimiter=";", on_bad_lines='skip')
+df = pd.read_csv("external_files/Dataset/Cleaned_Dataset.csv", delimiter=",", on_bad_lines='skip')
 df["Season"] = df["Season"].apply(lambda x: x.split(", ") if isinstance(x, str) else [])
 image_folder = "external_files/Dataset_images"
 
@@ -53,14 +55,6 @@ def encode_image_to_base64(image_path):
         encoded_string = base64.b64encode(image_file.read())
     return encoded_string.decode('utf-8')
 
-# def generate_url(product_id, folder_path=image_folder):
-#     for filename in os.listdir(folder_path):
-#         if product_id in filename:
-#             file_path = os.path.join(folder_path, filename)
-#             with open(file_path, "rb") as image_file:
-#                 encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-#             return encoded_string
-#     return None  # Return None if no matching file is found
 
 # 4. Functions to compute similarity
 def compute_similarity(item1, item2):
@@ -89,15 +83,20 @@ def determine_current_season():
 def get_top_similar_items_regression_fixed_with_constraints(reference_item, df, categories, similarity_function, gender, top_n=5):
     category_items = {}
     for category, subcategories in base_category_constraints.items():
+        # Check if the current category is in the categories list
+        if category not in categories:
+            continue
+
         feature_diffs = []
         items_in_category = []
         for _, item in df.iterrows():
             if item["Product ID"] != reference_item["Product ID"]:
-                main_category = str(item["Main Category"]).lower()
-                subcategory = str(item["Subcategory"]).lower()
-                is_category = any(sub in subcategory for sub in subcategories)
+                is_category = any(sub.lower() in str(item["Subcategory"]).lower() for sub in subcategories)
+                
+                # Gender suitability check
                 item_gender = str(item.get("Gender", "")).lower()
-                is_gender_suitable = item_gender in [gender.lower(), "any", ""]
+                is_gender_suitable = item_gender == gender.lower() or item_gender == "any"
+                
                 if is_category and is_gender_suitable:
                     feature_diff = get_feature_difference(reference_item, item)
                     feature_diffs.append(feature_diff)
@@ -261,8 +260,26 @@ mae_test = mean_absolute_error(y_test_sample, y_pred_test)
 # print(f'Training MAE: {mae_train}, Testing MAE: {mae_test}')
 
 def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=30):
-    base_categories = ["tops", "trousers", "shoes"]
-    accessory_categories = ["jewellery", "bags", "caps", "belts", "socks", "bracelets", "eyewear"]
+    base_categories = list(base_category_constraints.keys())
+
+    base_items = get_top_similar_items_regression_fixed_with_constraints(reference_item, df, base_categories, compute_advanced_similarity_v3_updated, gender)
+    accessory_items = df[(df["Main Category"] == "Accessories") & ((df["Gender"].str.lower() == gender.lower()) | (df["Gender"].str.lower() == "any") | df["Gender"].isnull())].to_dict(orient="records")
+
+    outfits = set()
+    while len(outfits) < max_outfits:
+        base = [generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories]
+
+        # Ensure there are accessories available
+        accessory_count = random.randint(1, len(accessory_items)) if accessory_items else 0
+        chosen_accessories = random.sample(accessory_items, accessory_count)
+        accessories = [generate_url(item["Product ID"]) for item in chosen_accessories]
+        outfit = tuple(base + accessories[:3])
+        outfits.add(outfit)
+
+    return list(outfits)
+
+def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=30):
+    base_categories = list(base_category_constraints.keys())
 
     # Identify the main category of the reference item
     reference_subcategory = reference_item["Subcategory"]
@@ -272,58 +289,45 @@ def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=
             reference_main_category = category
             break
 
-    base_items = get_top_similar_items_regression_fixed(reference_item, df, base_categories, compute_advanced_similarity_v3_updated)
-    accessory_items = get_top_similar_items_regression_fixed(reference_item, df, accessory_categories, compute_advanced_similarity_v3_updated)
-
+    base_items = get_top_similar_items_regression_fixed_with_constraints(reference_item, df, base_categories, compute_advanced_similarity_v3_updated, gender)
+    accessory_items = df[(df["Main Category"] == "Accessories") & ((df["Gender"].str.lower() == gender.lower()) | (df["Gender"].str.lower() == "any") | df["Gender"].isnull())].to_dict(orient="records")
+   
+    
     outfits = set()
     while len(outfits) < max_outfits:
-        base = [generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories]
-        
-        # Replace the item in the outfit that matches the main category of the reference item with the reference item
-        if reference_main_category:
-            base[base_categories.index(reference_main_category)] = generate_url(reference_item["Product ID"])
-        
-        accessory_count = random.randint(0, len(accessory_items))
-        chosen_accessories = random.sample(accessory_categories, accessory_count)
-        accessories = [generate_url(random.choice(accessory_items[category])["Product ID"]) for category in chosen_accessories]
-        accessories[:3]
+        chosen_colors = [reference_item["Colors"]]
+        base = []
+
+        for category in base_categories:
+            if category != reference_main_category:
+                # Prioritize complementary colors but sometimes pick random colors for variety
+                if random.random() > 0.7:
+                    item_choice = random.choice(base_items[category])
+                else:
+                    complementary_colors = COLOR_WHEEL.get(chosen_colors[-1], [])
+                    item_choice = next((item for item in base_items[category] if item["Colors"] in complementary_colors), random.choice(base_items[category]))
+                chosen_colors.append(item_choice["Colors"])
+                base.append(generate_url(item_choice["Product ID"]))
+
+        # Insert reference item in its corresponding position
+        if reference_main_category and reference_main_category in base_categories:
+            base.insert(base_categories.index(reference_main_category), generate_url(reference_item["Product ID"]))
+
+        chosen_accessories = random.sample(accessory_items, min(4, len(accessory_items)))
+        unique_subcategories = set()
+        final_accessories = []
+        for accessory in chosen_accessories:
+            if accessory["Subcategory"] not in unique_subcategories:
+                unique_subcategories.add(accessory["Subcategory"])
+                final_accessories.append(accessory)
+
+        accessories = [generate_url(item["Product ID"]) for item in final_accessories]
+
         outfit = tuple(base + accessories)
         outfits.add(outfit)
-        
+
     return list(outfits)
 
-
-def generate_outfits_regression_v6_urls(reference_item,user_image, df, gender, max_outfits=30):
-    base_categories = ["tops", "trousers", "shoes"]
-    accessory_categories = ["jewellery", "bags", "caps", "belts", "socks", "bracelets", "eyewear"]
-
-    # Identify the main category of the reference item
-    reference_subcategory = reference_item["Subcategory"]
-    reference_main_category = None
-    for category, subcategories in base_category_constraints.items():
-        if reference_subcategory.lower() in [sub.lower() for sub in subcategories]:
-            reference_main_category = category
-            break
-
-    base_items = get_top_similar_items_regression_fixed(reference_item, df, base_categories, compute_advanced_similarity_v3_updated)
-    accessory_items = get_top_similar_items_regression_fixed(reference_item, df, accessory_categories, compute_advanced_similarity_v3_updated)
-
-    outfits = set()
-    while len(outfits) < max_outfits:
-        base = [generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories]
-        
-        # Replace the item in the outfit that matches the main category of the reference item with the reference item
-        if reference_main_category:
-            base[base_categories.index(reference_main_category)] = user_image
-        
-        accessory_count = random.randint(0, len(accessory_items))
-        chosen_accessories = random.sample(accessory_categories, accessory_count)
-        accessories = [generate_url(random.choice(accessory_items[category])["Product ID"]) for category in chosen_accessories]
-        accessories[:3]
-        outfit = tuple(base + accessories)
-        outfits.add(outfit)
-        
-    return list(outfits)
 
 
 class Generator():
@@ -368,7 +372,7 @@ class Generator():
     def start_genertation_html(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Men")
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Women")
 
         html_template = """
         <!DOCTYPE html>
