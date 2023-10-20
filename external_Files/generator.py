@@ -259,26 +259,8 @@ mae_test = mean_absolute_error(y_test_sample, y_pred_test)
 # print(f'Training R2: {r2_train}, Testing R2: {r2_test}')
 # print(f'Training MAE: {mae_train}, Testing MAE: {mae_test}')
 
-def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=30):
-    base_categories = list(base_category_constraints.keys())
 
-    base_items = get_top_similar_items_regression_fixed_with_constraints(reference_item, df, base_categories, compute_advanced_similarity_v3_updated, gender)
-    accessory_items = df[(df["Main Category"] == "Accessories") & ((df["Gender"].str.lower() == gender.lower()) | (df["Gender"].str.lower() == "any") | df["Gender"].isnull())].to_dict(orient="records")
-
-    outfits = set()
-    while len(outfits) < max_outfits:
-        base = [generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories]
-
-        # Ensure there are accessories available
-        accessory_count = random.randint(1, len(accessory_items)) if accessory_items else 0
-        chosen_accessories = random.sample(accessory_items, accessory_count)
-        accessories = [generate_url(item["Product ID"]) for item in chosen_accessories]
-        outfit = tuple(base + accessories[:3])
-        outfits.add(outfit)
-
-    return list(outfits)
-
-def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=30):
+def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=40):
     base_categories = list(base_category_constraints.keys())
 
     # Identify the main category of the reference item
@@ -368,48 +350,99 @@ class Generator():
         output_dict = {category_name: outfit_combinations_regression_v5_urls}
         return output_dict
     
-    
+        
     def start_genertation_html(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Women")
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Men")
 
-        html_template = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Image Display</title>
-        </head>
-        <body>
-            <table border="1">
-                <tr>
-                    <th>Uploaded Image name</th>
-                    <th>Look</th>
-                </tr>
-                {}
-            </table>
-        </body>
-        </html>
+        image_tag_template = '<img src="{}" style="object-fit: contain; width: 400px; height: 400px; margin: 5px;">'
+        outfit_divs = ""
+
+        for outfit in outfit_combinations_regression_v5_urls:
+            outfit_divs += f'<div class="outfit-combination"><h2>{reference_item_title}</h2>'
+            for i in range(3):  # 3 rows
+                outfit_divs += '<div class="outfit-row">'
+                for j in range(3):  # 3 columns
+                    if i * 3 + j < len(outfit):
+                        outfit_divs += image_tag_template.replace("{}", outfit[i * 3 + j])
+                outfit_divs += '</div>'
+            outfit_divs += '</div>'
+
+        html_template = f"""
+    <html>
+    <head>
+    <title>
+    Outfit Combinations
+    </title>
+    <style>
+    .outfit-combination {{
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: none;
+    }}
+    .outfit-combination:first-of-type {{
+        display: block;
+    }}
+    .outfit-row {{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }}
+    .navigation-buttons {{
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }}
+    button {{
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        margin: 0 10px;
+    }}
+    </style>
+    </head>
+    <body>
+    {outfit_divs}
+    <div class="navigation-buttons">
+    <button id="prev-button">
+    Previous
+    </button>
+    <button id="next-button">
+    Next
+    </button>
+    </div>
+    <script>
+    document.getElementById("prev-button").addEventListener("click", function() {{
+        navigateOutfit(-1);
+    }});
+    document.getElementById("next-button").addEventListener("click", function() {{
+        navigateOutfit(1);
+    }});
+    function navigateOutfit(direction) {{
+        let outfits = document.querySelectorAll(".outfit-combination");
+        let currentIndex = -1;
+        for (let i = 0; i < outfits.length; i++) {{
+            if (getComputedStyle(outfits[i]).display !== 'none') {{
+                currentIndex = i;
+                break;
+            }}
+        }}
+        if (currentIndex !== -1) {{
+            outfits[currentIndex].style.display = 'none';
+            let newIndex = currentIndex + direction;
+            if (newIndex < 0) newIndex = outfits.length - 1;
+            if (newIndex >= outfits.length) newIndex = 0;
+            outfits[newIndex].style.display = 'block';
+        }}
+    }}
+    </script>
+    </body>
+    </html>
         """
 
-        image_template = """
-        <tr>
-            <td>{key}</td>
-            <td>
-                {images}
-            </td>
-        </tr>
-        """
-
-        image_tag_template = '<img src="{}" style="margin: 5px;object-fit: cover; width: 100px;">'
-
-        table_rows = ""
-        for combination in outfit_combinations_regression_v5_urls:
-            image_tags = "".join([image_tag_template.format(image) for image in combination])
-            table_rows += image_template.format(key=reference_item_title, images=image_tags)
-
-        final_html = html_template.format(table_rows)
-        return final_html
+        return html_template
 
 
 
