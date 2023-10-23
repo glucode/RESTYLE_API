@@ -58,14 +58,14 @@ def extract_dominant_colors(image_path, k=4):
     color_info = []
     for color in dominant_colors:
         hex_code = "#{:02x}{:02x}{:02x}".format(color[0], color[1], color[2])
-        color_name = rgb_to_color_name(color)
-        color_info.append((hex_code, color_name))
+        # color_name = rgb_to_color_name(color)
+        color_info.append(hex_code)
 
     return color_info
 
 # Testing 
-image_path = "uploads/102820308_C72_1.jpeg_no_background.png"  
-dominant_colors = extract_dominant_colors(image_path, k=4)
-print("Dominant Colors:")
-for hex_code, color_name in dominant_colors:
-    print(f"Hex: {hex_code}, Name: {color_name}")
+# image_path = "uploads/102820308_C72_1.jpeg_no_background.png"  
+# dominant_colors = extract_dominant_colors(image_path, k=4)
+# print("Dominant Colors:")
+# for hex_code in dominant_colors:
+#     print(f"Hex: {hex_code}")
