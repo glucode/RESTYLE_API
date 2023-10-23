@@ -44,6 +44,58 @@ COLOR_WHEEL = {
     "Black": ["Red", "Red-Orange", "Orange", "Yellow-Orange", "Yellow", "Yellow-Green", "Green", "Blue-Green", "Blue", "Blue-Purple", "Purple", "Red-Purple"]
 }
 
+# Define the color profiles
+COLOR_PROFILES = {
+    "Triads": {
+        "Red": ["Blue-Green", "Yellow-Green"],
+        "Red-Orange": ["Blue", "Green"],
+        "Orange": ["Blue-Purple", "Yellow-Green"],
+        "Yellow-Orange": ["Purple", "Blue-Green"],
+        "Yellow": ["Blue", "Red-Purple"],
+        "Yellow-Green": ["Red", "Blue-Purple"],
+        "Green": ["Red", "Blue"],
+        "Blue-Green": ["Red-Orange", "Red-Purple"],
+        "Blue": ["Red-Orange", "Yellow-Orange"],
+        "Blue-Purple": ["Yellow", "Green"],
+        "Purple": ["Yellow", "Blue-Green"],
+        "Red-Purple": ["Yellow-Green", "Blue"]
+    },
+    "Complementary": {
+        "Red": ["Green"],
+        "Red-Orange": ["Blue-Green"],
+        "Orange": ["Blue"],
+        "Yellow-Orange": ["Blue-Purple"],
+        "Yellow": ["Purple"],
+        "Yellow-Green": ["Red-Purple"],
+        "Green": ["Red"],
+        "Blue-Green": ["Red-Orange"],
+        "Blue": ["Orange"],
+        "Blue-Purple": ["Yellow-Orange"],
+        "Purple": ["Yellow"],
+        "Red-Purple": ["Yellow-Green"]
+    },
+    "Monotone": {color: [color] for color in COLOR_WHEEL.keys()},
+    "Analogous": {
+        "Red": ["Red-Orange", "Red-Purple"],
+        "Red-Orange": ["Red", "Orange"],
+        "Orange": ["Red-Orange", "Yellow-Orange"],
+        "Yellow-Orange": ["Orange", "Yellow"],
+        "Yellow": ["Yellow-Orange", "Yellow-Green"],
+        "Yellow-Green": ["Yellow", "Green"],
+        "Green": ["Yellow-Green", "Blue-Green"],
+        "Blue-Green": ["Green", "Blue"],
+        "Blue": ["Blue-Green", "Blue-Purple"],
+        "Blue-Purple": ["Blue", "Purple"],
+        "Purple": ["Blue-Purple", "Red-Purple"],
+        "Red-Purple": ["Purple", "Red"]
+    }
+}
+
+# Define warm and cool colors
+WARM_COLORS = ["Red", "Red-Orange", "Orange", "Yellow-Orange", "Yellow"]
+COOL_COLORS = ["Yellow-Green", "Green", "Blue-Green", "Blue", "Blue-Purple", "Purple", "Red-Purple"]
+
+COLOR_PROFILES, WARM_COLORS, COOL_COLORS
 # 5. Functions for Outfit Generation
 base_category_constraints = {
     "tops": ["t-shirt", "shirts", "polo", "vests", "sweaters"],
@@ -72,7 +124,7 @@ def compute_similarity(item1, item2):
 def determine_current_season():
     month = datetime.now().month
     if month in [12, 1, 2]:
-        return "Winter"
+        return "Spring"
     elif month in [3, 4, 5]:
         return "Spring"
     elif month in [6, 7, 8]:
@@ -199,7 +251,7 @@ def compute_advanced_similarity_v3_updated(item1, item2):
             score += 1
 
     # Seasonality consideration
-    current_season = determine_current_season()
+    current_season = determine_current_season() #Expose the current season
     if current_season in item2["Season"] or len(item2["Season"]) == 4:  # If the item is for all seasons
         score += 1
 
@@ -237,30 +289,8 @@ X_test_sample_scaled = scaler.transform(X_test_sample)
 # Training the model
 model_sample = LinearRegression().fit(X_train_sample_scaled, y_train_sample)
 
-# Making predictions
-y_pred_train = model_sample.predict(X_train_sample_scaled)
-y_pred_test = model_sample.predict(X_test_sample_scaled)
 
-# Evaluating the model
-# Mean Squared Error (MSE)
-mse_train = mean_squared_error(y_train_sample, y_pred_train)
-mse_test = mean_squared_error(y_test_sample, y_pred_test)
-
-# R-squared (R2)
-r2_train = r2_score(y_train_sample, y_pred_train)
-r2_test = r2_score(y_test_sample, y_pred_test)
-
-# Mean Absolute Error (MAE)
-mae_train = mean_absolute_error(y_train_sample, y_pred_train)
-mae_test = mean_absolute_error(y_test_sample, y_pred_test)
-
-# Print the evaluation metrics
-# print(f'Training MSE: {mse_train}, Testing MSE: {mse_test}')
-# print(f'Training R2: {r2_train}, Testing R2: {r2_test}')
-# print(f'Training MAE: {mae_train}, Testing MAE: {mae_test}')
-
-
-def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=40):
+def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profile="Complementary", color_temp=None, max_outfits=40):
     base_categories = list(base_category_constraints.keys())
 
     # Identify the main category of the reference item
@@ -273,21 +303,26 @@ def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=
 
     base_items = get_top_similar_items_regression_fixed_with_constraints(reference_item, df, base_categories, compute_advanced_similarity_v3_updated, gender)
     accessory_items = df[(df["Main Category"] == "Accessories") & ((df["Gender"].str.lower() == gender.lower()) | (df["Gender"].str.lower() == "any") | df["Gender"].isnull())].to_dict(orient="records")
-   
-    
+
+    # Sort items based on matching color profile and temperature
+    for category, items in base_items.items():
+        base_items[category] = sorted(items, key=lambda x: (
+            (x["Colors"] in COLOR_PROFILES.get(color_profile, {}).get(reference_item["Colors"], [])) * 2 + 
+            (color_temp == "warm" and x["Colors"] in WARM_COLORS) + 
+            (color_temp == "cool" and x["Colors"] in COOL_COLORS)), reverse=True)
+
     outfits = set()
     while len(outfits) < max_outfits:
-        chosen_colors = [reference_item["Colors"]]
+        chosen_colors = [reference_item["Colors"]] # Starting with the reference item's color
         base = []
 
         for category in base_categories:
             if category != reference_main_category:
-                # Prioritize complementary colors but sometimes pick random colors for variety
-                if random.random() > 0.7:
-                    item_choice = random.choice(base_items[category])
+                # Prioritize the sorted items but sometimes pick random items for variety
+                if random.random() > 0.9:
+                    item_choice = random.choice(base_items.get(category, [reference_item]))  # Default to reference item if list is empty
                 else:
-                    complementary_colors = COLOR_WHEEL.get(chosen_colors[-1], [])
-                    item_choice = next((item for item in base_items[category] if item["Colors"] in complementary_colors), random.choice(base_items[category]))
+                    item_choice = base_items[category][0]  # Get the top item from the sorted list
                 chosen_colors.append(item_choice["Colors"])
                 base.append(generate_url(item_choice["Product ID"]))
 
@@ -312,41 +347,19 @@ def generate_outfits_regression_v5_urls(reference_item, df, gender, max_outfits=
 
 
 
-class Generator():
-    def compute_color_similarity_updated(item1, item2):
-        color1 = item1["Colors"]
-        color2 = item2["Colors"]
-
-        if not color1 or not color2:
-            return 0
-
-        if color1 in ["White", "Black"] or color2 in ["White", "Black"]:
-            return 2
-
-        if color1 == color2:
-            return 2  # Monochrome
-
-        if color2 in COLOR_WHEEL.get(color1, []):
-            if COLOR_WHEEL[color1].index(color2) == 0:
-                return 2  # Complementary
-            elif COLOR_WHEEL[color1].index(color2) < 3:
-                return 1  # Analogous or Split Complementary
-            else:
-                return 0.5  # Triadic or Tetradic
-        return 0
-    
+class Generator():    
     # Generate outfits and structure them as a dictionary
     def start_genertation(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Men")
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men", color_profile="Triads", color_temp="warm")
         output_dict = {reference_item_title: outfit_combinations_regression_v5_urls}
         return output_dict
     
     def generate_with_image(category_name, refrence_image):
         reference_item = df[df["Subcategory"].str.contains(category_name, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item , df, "Men")
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men", color_profile="Triads", color_temp="warm")
         output_dict = {category_name: outfit_combinations_regression_v5_urls}
         return output_dict
     
@@ -354,7 +367,7 @@ class Generator():
     def start_genertation_html(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v5_urls(reference_item, df, "Men")
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men", color_profile="Triads", color_temp="warm")
 
         image_tag_template = '<img src="{}" style="object-fit: contain; width: 400px; height: 400px; margin: 5px;">'
         outfit_divs = ""
