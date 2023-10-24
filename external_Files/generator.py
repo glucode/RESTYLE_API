@@ -93,6 +93,20 @@ COLOR_PROFILES = {
     }
 }
 
+# class MenStyles(Enum):
+#     MINIMAL = "minimal"
+#     SMART = "smart"
+#     OUTDOOR = "outdoor"
+#     STREETWEAR = "streetwear"
+#     CLASSY = "classy"
+    
+# class WomenStyles(Enum):
+#     ROMANTIC = "romantic"
+#     BOHEMIAN = "bohhemian"
+#     COLOURFUL = "colourful"
+#     STREETWEAR = "streetwear"
+#     CLASSY = "classy"
+
 # Define warm and cool colors
 WARM_COLORS = ["Red", "Red-Orange", "Orange", "Yellow-Orange", "Yellow"]
 COOL_COLORS = ["Yellow-Green", "Green", "Blue-Green", "Blue", "Blue-Purple", "Purple", "Red-Purple"]
@@ -376,7 +390,7 @@ class Generator():
     def start_genertation_html(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class=presets.WomensRomanticConfig)
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men",config_class=presets.MenOutdoorConfig)
 
         image_tag_template = '<img src="{}" style="object-fit: contain; width: 400px; height: 400px; margin: 5px;">'
         outfit_divs = ""
