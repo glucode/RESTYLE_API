@@ -329,9 +329,10 @@ def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profil
                 if random.random() > config_class.PRIORITY_RANDOM_SELECTION:
                     item_choice = random.choice(base_items.get(category, [reference_item]))  # Default to reference item if list is empty
                 else:
-                    profile_colors = config_class.COLOR_PROFILES.get(color_profile, {}).get(chosen_colors[-1], [])
-                    sorted_items = sorted(base_items.get(category, []), key=lambda x: profile_colors.index(x["Colors"]) if x["Colors"] in profile_colors else config_class.TOP_N_ITEMS_TO_SORT)
-                    item_choice = sorted_items[0] if sorted_items else random.choice(base_items.get(category, [reference_item]))
+                    # profile_colors = config_class.COLOR_PROFILES.get(color_profile, {}).get(chosen_colors[-1], [])
+                    # sorted_items = sorted(base_items.get(category, []), key=lambda x: profile_colors.index(x["Colors"]) if x["Colors"] in profile_colors else config_class.TOP_N_ITEMS_TO_SORT)
+                    # item_choice = sorted_items[0] if sorted_items else random.choice(base_items.get(category, [reference_item]))
+                    item_choice = base_items[category][0]  # Get the top item from the sorted list
                 # chosen_colors.append(item_choice["Colors"])
                 base.append(generate_url(item_choice["Product ID"]))
 
@@ -357,7 +358,6 @@ def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profil
 
 
 class Generator():    
-    # Generate outfits and structure them as a dictionary
     def start_genertation(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
@@ -376,7 +376,7 @@ class Generator():
     def start_genertation_html(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men")
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class=presets.WomensRomanticConfig)
 
         image_tag_template = '<img src="{}" style="object-fit: contain; width: 400px; height: 400px; margin: 5px;">'
         outfit_divs = ""
