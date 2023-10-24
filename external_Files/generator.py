@@ -12,11 +12,13 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.preprocessing import StandardScaler
+from external_Files import presets
 
 # 1. Data Loading and Preprocessing
 df = pd.read_csv("external_files/Dataset/Cleaned_Dataset.csv", delimiter=",", on_bad_lines='skip')
 df["Season"] = df["Season"].apply(lambda x: x.split(", ") if isinstance(x, str) else [])
 image_folder = "external_files/Dataset_images"
+config = presets.GenerateOutfitsConfig
 
 # 2. Complementary, Matching, and Seasonal colors definitions
 seasonal_colors = {
@@ -132,9 +134,9 @@ def determine_current_season():
     else:
         return "Autumn"
     
-def get_top_similar_items_regression_fixed_with_constraints(reference_item, df, categories, similarity_function, gender, top_n=5):
+def get_top_similar_items_regression_fixed_with_constraints(reference_item, df, categories, similarity_function, gender,config_class=config,top_n=5):
     category_items = {}
-    for category, subcategories in base_category_constraints.items():
+    for category, subcategories in config_class.base_category_constraints.items():
         # Check if the current category is in the categories list
         if category not in categories:
             continue
@@ -290,13 +292,13 @@ X_test_sample_scaled = scaler.transform(X_test_sample)
 model_sample = LinearRegression().fit(X_train_sample_scaled, y_train_sample)
 
 
-def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profile="Complementary", color_temp=None, max_outfits=40):
-    base_categories = list(base_category_constraints.keys())
+def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profile="Complementary", color_temp=None, config_class=config):
+    base_categories = list(config_class.base_category_constraints.keys())
 
     # Identify the main category of the reference item
     reference_subcategory = reference_item["Subcategory"]
     reference_main_category = None
-    for category, subcategories in base_category_constraints.items():
+    for category, subcategories in config_class.base_category_constraints.items():
         if reference_subcategory.lower() in [sub.lower() for sub in subcategories]:
             reference_main_category = category
             break
@@ -308,27 +310,29 @@ def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profil
     for category, items in base_items.items():
         # Sort the top 10 items based on the criteria
         top_items = sorted(items[:10], key=lambda x: (
-            (x["Colors"] in COLOR_PROFILES.get(color_profile, {}).get(reference_item["Colors"], [])) * 2 + 
-            (color_temp == "warm" and x["Colors"] in WARM_COLORS) + 
-            (color_temp == "cool" and x["Colors"] in COOL_COLORS)), reverse=True)
+            (x["Colors"] in config.COLOR_PROFILES.get(color_profile, {}).get(reference_item["Colors"], [])) * 2 + 
+            (color_temp == "warm" and x["Colors"] in config.WARM_COLORS) + 
+            (color_temp == "cool" and x["Colors"] in config.COOL_COLORS)), reverse=True)
         
         # Randomize the remaining items
         remaining_items = random.sample(items[10:], len(items[10:]))
         base_items[category] = top_items + remaining_items
 
     outfits = set()
-    while len(outfits) < max_outfits:
+    while len(outfits) < config_class.MAX_OUTFITS:
         chosen_colors = [reference_item["Colors"]] # Starting with the reference item's color
         base = []
 
         for category in base_categories:
             if category != reference_main_category:
                 # Prioritize the sorted items but sometimes pick random items for variety
-                if random.random() > 0.7:
+                if random.random() > config_class.PRIORITY_RANDOM_SELECTION:
                     item_choice = random.choice(base_items.get(category, [reference_item]))  # Default to reference item if list is empty
                 else:
-                    item_choice = base_items[category][0]  # Get the top item from the sorted list
-                chosen_colors.append(item_choice["Colors"])
+                    profile_colors = config_class.COLOR_PROFILES.get(color_profile, {}).get(chosen_colors[-1], [])
+                    sorted_items = sorted(base_items.get(category, []), key=lambda x: profile_colors.index(x["Colors"]) if x["Colors"] in profile_colors else config_class.TOP_N_ITEMS_TO_SORT)
+                    item_choice = sorted_items[0] if sorted_items else random.choice(base_items.get(category, [reference_item]))
+                # chosen_colors.append(item_choice["Colors"])
                 base.append(generate_url(item_choice["Product ID"]))
 
         # Insert reference item in its corresponding position
@@ -372,7 +376,7 @@ class Generator():
     def start_genertation_html(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men", color_profile="Triads", color_temp="warm")
+        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men")
 
         image_tag_template = '<img src="{}" style="object-fit: contain; width: 400px; height: 400px; margin: 5px;">'
         outfit_divs = ""

@@ -1,4 +1,4 @@
-from datetime import datetime
+
 
 class GenerateOutfitsConfig:
     COLOR_WHEEL = {
@@ -35,18 +35,18 @@ class GenerateOutfitsConfig:
         "Red-Purple": ["Yellow-Green", "Blue"]
     },
     "Complementary": {
-        "Red": ["Green"],
-        "Red-Orange": ["Blue-Green"],
-        "Orange": ["Blue"],
-        "Yellow-Orange": ["Blue-Purple"],
-        "Yellow": ["Purple"],
-        "Yellow-Green": ["Red-Purple"],
-        "Green": ["Red"],
-        "Blue-Green": ["Red-Orange"],
-        "Blue": ["Orange"],
-        "Blue-Purple": ["Yellow-Orange"],
-        "Purple": ["Yellow"],
-        "Red-Purple": ["Yellow-Green"]
+        "Red": ["Red-Orange", "Red-Purple", "Blue-Green", "Yellow-Green"],
+        "Red-Orange": ["Red", "Orange", "Blue-Purple", "Green"],
+        "Orange": ["Red-Orange", "Yellow-Orange", "Blue", "Purple"],
+        "Yellow-Orange": ["Orange", "Yellow", "Blue-Green", "Red-Purple"],
+        "Yellow": ["Yellow-Orange", "Yellow-Green", "Purple", "Red"],
+        "Yellow-Green": ["Yellow", "Green", "Red-Purple", "Red-Orange"],
+        "Green": ["Yellow-Green", "Blue-Green", "Red", "Red-Orange"],
+        "Blue-Green": ["Green", "Blue", "Red-Orange", "Yellow-Orange"],
+        "Blue": ["Blue-Green", "Blue-Purple", "Orange", "Yellow"],
+        "Blue-Purple": ["Blue", "Purple", "Yellow-Orange", "Green"],
+        "Purple": ["Blue-Purple", "Red-Purple", "Yellow", "Blue"],
+        "Red-Purple": ["Purple", "Red", "Green", "Yellow-Green"],
     },
     "Monotone": {color: [color] for color in COLOR_WHEEL.keys()},
     "Analogous": {
@@ -77,6 +77,6 @@ class GenerateOutfitsConfig:
     }
     
     # Other configurations
-    MAX_OUTFITS = 40
-    TOP_N_ITEMS_TO_SORT = 10
+    MAX_OUTFITS = 10
+    TOP_N_ITEMS_TO_SORT = 5
     PRIORITY_RANDOM_SELECTION = 0.7
