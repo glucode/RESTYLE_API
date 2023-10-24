@@ -306,10 +306,15 @@ def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profil
 
     # Sort items based on matching color profile and temperature
     for category, items in base_items.items():
-        base_items[category] = sorted(items, key=lambda x: (
+        # Sort the top 10 items based on the criteria
+        top_items = sorted(items[:10], key=lambda x: (
             (x["Colors"] in COLOR_PROFILES.get(color_profile, {}).get(reference_item["Colors"], [])) * 2 + 
             (color_temp == "warm" and x["Colors"] in WARM_COLORS) + 
             (color_temp == "cool" and x["Colors"] in COOL_COLORS)), reverse=True)
+        
+        # Randomize the remaining items
+        remaining_items = random.sample(items[10:], len(items[10:]))
+        base_items[category] = top_items + remaining_items
 
     outfits = set()
     while len(outfits) < max_outfits:
@@ -319,7 +324,7 @@ def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profil
         for category in base_categories:
             if category != reference_main_category:
                 # Prioritize the sorted items but sometimes pick random items for variety
-                if random.random() > 0.9:
+                if random.random() > 0.7:
                     item_choice = random.choice(base_items.get(category, [reference_item]))  # Default to reference item if list is empty
                 else:
                     item_choice = base_items[category][0]  # Get the top item from the sorted list
