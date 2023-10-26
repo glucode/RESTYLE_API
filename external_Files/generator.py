@@ -350,7 +350,7 @@ class Generator():
         output_dict = {category_name: outfit_combinations_regression_v5_urls}
         return output_dict
     
-        
+    # Generate outfits allow the user to select presets 
     def start_genertation_html(categoryName):
         reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
         reference_item_title = reference_item["Product Title"]

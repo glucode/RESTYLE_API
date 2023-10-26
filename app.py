@@ -71,7 +71,6 @@ def remove_background():
             return jsonify({'error': 'No file part'}), 400
 
         file = request.files['image']
-
         if file.filename == '':
             return jsonify({'error': 'No selected file'}), 400
 
@@ -81,7 +80,6 @@ def remove_background():
         temp_image_path = os.path.join(upload_folder, file.filename)
         file.save(temp_image_path)
 
-        # Call the segment_image function with the saved file path
         segmented_image = transcoder.segment_image(temp_image_path)
 
         # Delete the temporary file if you no longer need it
