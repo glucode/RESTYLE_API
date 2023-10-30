@@ -46,9 +46,9 @@ def classify():
 
 @app.route('/generate', methods=['GET'])
 def generate():
-    # image = request.files['image']
-    category = request.form['category']
-    output = generator.Generator.start_genertation(category)
+    name = request.args.get('name')
+    style = request.args.get('style')
+    output = generator.Generator.start_genertation(categoryName=name, preset=style)
     return output,200
 
 @app.route('/generate_userimage', methods=['GET'])
@@ -61,7 +61,8 @@ def generate_with_image(): #handle potential of no images
 @app.route('/generate_html_list',methods=['GET'])
 def generate_html_list():
     name = request.args.get('name')
-    output = generator.Generator.start_genertation_html(name)
+    style = request.args.get('style')
+    output = generator.Generator.start_genertation_html(categoryName=name, preset=style)
     return output,200
 
 @app.route('/remove_background',methods=['POST'])
@@ -90,7 +91,24 @@ def remove_background():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+@app.route('/add_to_wardrobe',methods=['POST'])
+def add_to_wardrobe():
+    """
+    Add a new item to the wardobe 
     
+    Process:
+    - The background will be removed
+    - Items will be deep tagged
+    - Extract colors from the item
+    - Find a matching item in our database to fill in the missig attributes 
+        
+    Output:
+    - Saves file to the database
+    """
+    return jsonify(message= 'success')
+    
+
+
 @app.route('/not_found')
 def not_fount():
     return jsonify(message="That response was not found"), 404 

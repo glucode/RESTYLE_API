@@ -371,12 +371,42 @@ def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profil
 
 
 
-class Generator():    
-    def start_genertation(categoryName):
-        reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
-        reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men", color_profile="Triads", color_temp="warm")
-        output_dict = {reference_item_title: outfit_combinations_regression_v5_urls}
+class Generator():   
+
+     
+    def start_genertation(categoryName, preset= "bohemian", gender = "Women"):
+        general_preset = presets
+        if gender == "Women" :
+            if preset == "normal":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.GenerateOutfitsConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "bohemian":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.WomensBohemianConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "colourful":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.GenerateOutfitsConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "streetwear":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.StreetwearConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "classy": 
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.ClassyConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "romantic":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.WomensRomanticConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
         return output_dict
     
     def generate_with_image(category_name, refrence_image):
@@ -387,10 +417,61 @@ class Generator():
         return output_dict
     
     # Generate outfits allow the user to select presets 
-    def start_genertation_html(categoryName):
-        reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
-        reference_item_title = reference_item["Product Title"]
-        outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men",config_class=presets.MenOutdoorConfig)
+    
+    def start_genertation_html(categoryName, preset= "bohemian", gender = "Women"):
+        general_preset = presets
+        if gender == "Women" :
+            if preset == "normal":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.GenerateOutfitsConfig)
+            elif preset == "bohemian":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.WomensBohemianConfig)
+            elif preset == "colourful":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.GenerateOutfitsConfig)
+            elif preset == "streetwear":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.StreetwearConfig)
+            elif preset == "classy": 
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.ClassyConfig)
+            elif preset == "romantic":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.WomensRomanticConfig)
+        elif preset == "Men" : 
+            if preset == "normal":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men",config_class= general_preset.GenerateOutfitsConfig)
+            elif preset == "minimal":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men",config_class= general_preset.MenMinimalConfig)
+            elif preset == "smart":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men",config_class= general_preset.MenSmartConfig)
+            elif preset == "streetwear":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men",config_class= general_preset.StreetwearConfig)
+            elif preset == "outdoor": 
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men",config_class= general_preset.MenOutdoorConfig)
+            elif preset == "classy":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Men",config_class= general_preset.ClassyConfig)
+                     
+            
 
         image_tag_template = '<img src="{}" style="object-fit: contain; width: 400px; height: 400px; margin: 5px;">'
         outfit_divs = ""

@@ -80,7 +80,7 @@ class GenerateOutfitsConfig:
     TOP_N_ITEMS_TO_SORT = 5
     PRIORITY_RANDOM_SELECTION = 0.7
 
-        
+   
 class WomensBohemianConfig(GenerateOutfitsConfig):
 
     COLOR_PROFILES = {
@@ -143,6 +143,7 @@ class WomensBohemianConfig(GenerateOutfitsConfig):
     MAX_OUTFITS = 5
     TOP_N_ITEMS_TO_SORT = 2
     PRIORITY_RANDOM_SELECTION = 0.7
+   
     
 class StreetwearConfig(GenerateOutfitsConfig):
     
@@ -208,6 +209,7 @@ class StreetwearConfig(GenerateOutfitsConfig):
     MAX_OUTFITS = 15
     TOP_N_ITEMS_TO_SORT = 2
     PRIORITY_RANDOM_SELECTION = 0.7
+   
     
 class WomensRomanticConfig(GenerateOutfitsConfig):
         
@@ -258,8 +260,9 @@ class WomensRomanticConfig(GenerateOutfitsConfig):
     MAX_OUTFITS = 15
     TOP_N_ITEMS_TO_SORT = 2
     PRIORITY_RANDOM_SELECTION = 0.7
+   
     
-class WomensClassyConfig(GenerateOutfitsConfig):
+class ClassyConfig(GenerateOutfitsConfig):
         
     COLOR_PROFILES = {
         "Triads": {
@@ -325,7 +328,6 @@ class WomensClassyConfig(GenerateOutfitsConfig):
     PRIORITY_RANDOM_SELECTION = 0.7
     
     
-
 class MenMinimalConfig(GenerateOutfitsConfig):
     
     COLOR_PROFILES = {
@@ -379,6 +381,7 @@ class MenMinimalConfig(GenerateOutfitsConfig):
     MAX_OUTFITS = 10
     TOP_N_ITEMS_TO_SORT = 5
     PRIORITY_RANDOM_SELECTION = 0.7
+
     
 class MenSmartConfig(GenerateOutfitsConfig):
     
@@ -487,8 +490,7 @@ class MenClassyConfig(GenerateOutfitsConfig):
     TOP_N_ITEMS_TO_SORT = 5
     PRIORITY_RANDOM_SELECTION = 0.7
     
-    
-    
+      
 class MenOutdoorConfig(GenerateOutfitsConfig):
     COLOR_PROFILES = {
         
