@@ -24,3 +24,5 @@ class ClothingIdentifier():
         predicted_confidence = probabilities[0, predicted_class_idx].item()
 
         return model.config.id2label[predicted_class_idx]
+    
+    

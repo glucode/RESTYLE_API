@@ -50,5 +50,5 @@ def segment_image(image_path, threshold=0.0):
     print(f"Image saved as {output_path}")
 
 # Example usage with a threshold value:
-# segment_image("IMG_0424 2.png", threshold=)
+# segment_image("Screenshot 2023-10-30 at 20.41.07.png")
 

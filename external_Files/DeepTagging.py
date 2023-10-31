@@ -79,6 +79,25 @@ def visualize_predictions(image, outputs, threshold=0.8):
     # plot results
     plot_results(image, probas[keep], bboxes_scaled)
     
+def get_classification_results(image, outputs, threshold=0.8):
+    probas = outputs.logits.softmax(-1)[0, :, :-1]
+    keep = probas.max(-1).values > threshold
+
+    # convert predicted boxes from [0; 1] to image scales
+    bboxes_scaled = rescale_bboxes(outputs.pred_boxes[0, keep].cpu(), image.size)
+
+    detected_objects = 0  # Counter for detected objects
+    results = []  
+    for p, (xmin, ymin, xmax, ymax) in zip(probas[keep], bboxes_scaled.tolist()):
+        cl = p.argmax()
+        score = p[cl].item()  # Confidence score for the detected object
+        detected_objects += 1
+        object_name = idx_to_text(cl)
+        print(f"Detected object {detected_objects}: {object_name} with confidence {score:.2f}")
+        results.append({"object": object_name, "confidence": score})
+    
+    return results
+    
 MODEL_NAME = "valentinafeve/yolos-fashionpedia"
 
 feature_extractor = YolosFeatureExtractor.from_pretrained('hustvl/yolos-small')
@@ -92,11 +111,8 @@ image
 inputs = feature_extractor(images=image, return_tensors="pt")
 outputs = model(**inputs)
 
-img = visualize_predictions(image, outputs, threshold=0.1)
-img
+# results = get_classification_results(image, outputs, threshold=0.4)
+# print(f"Detected objects in JSON format: {results}")
 
-results = visualize_predictions(image, outputs, threshold=0.4)
-print(f"Detected objects in JSON format: {results}")
-
-json_output = json.dumps(results)
-print(f"Detected objects in JSON format: {json_output}")
+# json_output = json.dumps(results)
+# print(f"Detected objects in JSON format: {json_output}")

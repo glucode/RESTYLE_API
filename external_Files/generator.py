@@ -198,8 +198,7 @@ def generate_outfits_with_user_item(refrence_category,user_image_file, df, gende
     # Save the user's item locally
     user_item_path = save_user_item_locally(user_image_file)
     
-    # Use the user's item as the reference item
-    reference_item = {"Product ID": refrence_category, "Image Path": user_item_path}  # Add other necessary attributes
+    reference_item = {"Product ID": refrence_category, "Image Path": user_item_path}  
     
     base_categories = ["tops", "trousers", "shoes"]
     accessory_categories = ["jewellery", "bags", "caps", "belts", "socks", "bracelets", "eyewear"]
@@ -212,7 +211,7 @@ def generate_outfits_with_user_item(refrence_category,user_image_file, df, gende
         base = [generate_url(random.choice(base_items[category])["Product ID"]) for category in base_categories]
         
         # Replace the item in the outfit that matches the main category of the reference item with the user's item
-        base[base_categories.index(refrence_category)] = user_item_path  # Assuming the user's item is a "top". Modify as needed.
+        base[base_categories.index(refrence_category)] = user_item_path  # Assuming the user's item is a "top"
         
         accessory_count = random.randint(0, len(accessory_items))
         chosen_accessories = random.sample(accessory_categories, accessory_count)
@@ -280,7 +279,7 @@ def get_feature_difference(item1, item2):
     overlapping_seasons = len(set(item1["Season"]).intersection(set(item2["Season"])))
     return [color_diff, main_category_diff, subcategory_diff, overlapping_seasons]
 
-# Assume df is your DataFrame
+
 sample_df = df.sample(n=200, random_state=42)
 
 X_sample = []
@@ -294,22 +293,21 @@ for idx1, item1 in sample_df.iterrows():
             X_sample.append(feature_diff)
             y_sample.append(similarity_score)
 
-# Splitting the dataset into training and testing sets
+# Splitting the dataset 
 X_train_sample, X_test_sample, y_train_sample, y_test_sample = train_test_split(X_sample, y_sample, test_size=0.2, random_state=42)
 
-# Normalizing/Standardizing the data
+# Normalizing/
 scaler = StandardScaler()
 X_train_sample_scaled = scaler.fit_transform(X_train_sample)
 X_test_sample_scaled = scaler.transform(X_test_sample)
 
-# Training the model
+
 model_sample = LinearRegression().fit(X_train_sample_scaled, y_train_sample)
 
 
 def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profile="Complementary", color_temp=None, config_class=config):
     base_categories = list(config_class.base_category_constraints.keys())
 
-    # Identify the main category of the reference item
     reference_subcategory = reference_item["Subcategory"]
     reference_main_category = None
     for category, subcategories in config_class.base_category_constraints.items():
@@ -320,9 +318,8 @@ def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profil
     base_items = get_top_similar_items_regression_fixed_with_constraints(reference_item, df, base_categories, compute_advanced_similarity_v3_updated, gender)
     accessory_items = df[(df["Main Category"] == "Accessories") & ((df["Gender"].str.lower() == gender.lower()) | (df["Gender"].str.lower() == "any") | df["Gender"].isnull())].to_dict(orient="records")
 
-    # Sort items based on matching color profile and temperature
     for category, items in base_items.items():
-        # Sort the top 10 items based on the criteria
+        # Sort the top 10 items 
         top_items = sorted(items[:10], key=lambda x: (
             (x["Colors"] in config.COLOR_PROFILES.get(color_profile, {}).get(reference_item["Colors"], [])) * 2 + 
             (color_temp == "warm" and x["Colors"] in config.WARM_COLORS) + 
@@ -408,6 +405,43 @@ class Generator():
                 outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.WomensRomanticConfig)
                 output_dict = {categoryName: outfit_combinations_regression_v5_urls}
         return output_dict
+    
+    def start_genertation_advanced(categoryName, preset= "bohemian", gender="Women", color_profile= "Complimentary", color_temp="warm"):
+        general_preset = presets
+        if gender == "Women" :
+            if preset == "normal":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women", color_profile=color_profile, color_temp=color_temp,config_class= general_preset.GenerateOutfitsConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "bohemian":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.WomensBohemianConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "colourful":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.GenerateOutfitsConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "streetwear":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.StreetwearConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "classy": 
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.ClassyConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+            elif preset == "romantic":
+                reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
+                reference_item_title = reference_item["Product Title"]
+                outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.WomensRomanticConfig)
+                output_dict = {categoryName: outfit_combinations_regression_v5_urls}
+        return output_dict
+    
+    
     
     def generate_with_image(category_name, refrence_image):
         reference_item = df[df["Subcategory"].str.contains(category_name, case=False, na=False)].sample(n=1).iloc[0]
