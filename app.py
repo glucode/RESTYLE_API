@@ -61,6 +61,8 @@ def generate():
     output = generator.Generator.start_genertation(categoryName=name, preset=style)
     return output,200
 
+
+@app.route('/generate_advanced',defaults = {'color_profile':'Complementary','color_temp':'warm'}, methods=['GET'])
 @app.route('/generate_advanced', methods=['GET'])
 def generate_advanced():
     name = request.args.get('name')
@@ -68,7 +70,8 @@ def generate_advanced():
     gender = request.args.get('gender')
     color_profile = request.args.get('color_profile')
     color_temp = request.args.get('color_temp')
-    output = generator.Generator.start_genertation_advanced(categoryName=name, preset=style, gender="Women", color_profile= "Complimentary", color_temp="warm")
+    
+    output = generator.Generator.start_genertation_advanced(categoryName=name, preset=style, gender=gender, color_profile= color_profile, color_temp=color_temp)
     return output,200
 
 
