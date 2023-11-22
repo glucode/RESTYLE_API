@@ -111,9 +111,17 @@ def encode_image_to_base64(image_path):
 
 
 # 4. Functions to compute similarity
-def compute_similarity(item1, item2):
+def compute_compatability(item1, item2):
     """
-    Calculates a similarity score between two fashion items, considering color vibrancy and season appropriateness.
+    Calculates a similarity score between two fashion items, taking into account color vibrancy, season appropriateness, 
+    and emphasizing alignment with the current season.
+
+    The function applies the following rules for scoring:
+    - Decreases the score for matching colors (to encourage color variety).
+    - Increases the score if both items are suitable for the current season, with a higher reward for this match.
+    - Penalizes items that are not suitable for the current season.
+    - Adjusts scores based on main category, subcategory, and brand similarities or differences.
+    - Rewards items that overlap in seasons, emphasizing seasonal appropriateness.
 
     Parameters:
     - item1, item2 (dict): Dictionaries representing the two items being compared.
@@ -123,26 +131,23 @@ def compute_similarity(item1, item2):
     """
     vibrant_colors = ["Red", "Blue", "Yellow", "Pink", "Orange", "Purple", "Bright Green"]
     dull_colors = ["Brown", "Grey", "Olive", "Navy", "Maroon", "Taupe", "Beige", "Black", "White"]
-
-    sunny_seasons = ["Spring", "Summer"]
-    cold_seasons = ["Autumn", "Winter"]
+    current_season = determine_current_season()
 
     score = 0
     if item1["Colors"] == item2["Colors"]:
         score -= 2
 
     # Adjust score based on color and season
-    for season in sunny_seasons:
+    for season in [current_season]:
         if season in item1["Season"] and any(vibrant in item1["Colors"] for vibrant in vibrant_colors):
             score += 1
-        if season in item2["Season"] and any(vibrant in item2["Colors"] for vibrant in vibrant_colors):
-            score += 1
+        elif season not in item1["Season"]:
+            score -= 1  # Penalize if item1 is not suitable for the current season
 
-    for season in cold_seasons:
-        if season in item1["Season"] and any(dull in item1["Colors"] for dull in dull_colors):
-            score += 1
         if season in item2["Season"] and any(dull in item2["Colors"] for dull in dull_colors):
             score += 1
+        elif season not in item2["Season"]:
+            score -= 1  # Penalize if item2 is not suitable for the current season
 
     # Other attribute comparisons
     if item1["Main Category"] == item2["Main Category"]:
@@ -150,7 +155,7 @@ def compute_similarity(item1, item2):
     if item1["Subcategory"] == item2["Subcategory"]:
         score += 1
     if item1["Brands"] == item2["Brands"]:
-        score -= 2
+        score += 4
 
     overlapping_seasons = set(item1["Season"]).intersection(set(item2["Season"]))
     score += len(overlapping_seasons)
@@ -268,7 +273,7 @@ def generate_url(product_id, folder_path=image_folder):
     return product_id
 
 def compute_advanced_similarity_v3_updated(item1, item2):
-    score = compute_similarity(item1, item2)
+    score = compute_compatability(item1, item2)
 
     # Pattern consideration
     if "pattern" in str(item1["Patterns"]).lower() and "pattern" not in str(item2["Patterns"]).lower():
