@@ -112,18 +112,49 @@ def encode_image_to_base64(image_path):
 
 # 4. Functions to compute similarity
 def compute_similarity(item1, item2):
-        score = 0
-        if item1["Colors"] == item2["Colors"]:
-            score -= 2
-        if item1["Main Category"] == item2["Main Category"]:
+    """
+    Calculates a similarity score between two fashion items, considering color vibrancy and season appropriateness.
+
+    Parameters:
+    - item1, item2 (dict): Dictionaries representing the two items being compared.
+
+    Returns:
+    - int: The calculated similarity score.
+    """
+    vibrant_colors = ["Red", "Blue", "Yellow", "Pink", "Orange", "Purple", "Bright Green"]
+    dull_colors = ["Brown", "Grey", "Olive", "Navy", "Maroon", "Taupe", "Beige", "Black", "White"]
+
+    sunny_seasons = ["Spring", "Summer"]
+    cold_seasons = ["Autumn", "Winter"]
+
+    score = 0
+    if item1["Colors"] == item2["Colors"]:
+        score -= 2
+
+    # Adjust score based on color and season
+    for season in sunny_seasons:
+        if season in item1["Season"] and any(vibrant in item1["Colors"] for vibrant in vibrant_colors):
             score += 1
-        if item1["Subcategory"] == item2["Subcategory"]:
+        if season in item2["Season"] and any(vibrant in item2["Colors"] for vibrant in vibrant_colors):
             score += 1
-        if item1["Brands"] == item2["Brands"]:
-            score -= 2
-        overlapping_seasons = set(item1["Season"]).intersection(set(item2["Season"]))
-        score += len(overlapping_seasons)
-        return score
+
+    for season in cold_seasons:
+        if season in item1["Season"] and any(dull in item1["Colors"] for dull in dull_colors):
+            score += 1
+        if season in item2["Season"] and any(dull in item2["Colors"] for dull in dull_colors):
+            score += 1
+
+    # Other attribute comparisons
+    if item1["Main Category"] == item2["Main Category"]:
+        score += 1
+    if item1["Subcategory"] == item2["Subcategory"]:
+        score += 1
+    if item1["Brands"] == item2["Brands"]:
+        score -= 2
+
+    overlapping_seasons = set(item1["Season"]).intersection(set(item2["Season"]))
+    score += len(overlapping_seasons)
+    return score
     
 def determine_current_season():
     month = datetime.now().month
