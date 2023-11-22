@@ -93,20 +93,6 @@ COLOR_PROFILES = {
     }
 }
 
-# class MenStyles(Enum):
-#     MINIMAL = "minimal"
-#     SMART = "smart"
-#     OUTDOOR = "outdoor"
-#     STREETWEAR = "streetwear"
-#     CLASSY = "classy"
-    
-# class WomenStyles(Enum):
-#     ROMANTIC = "romantic"
-#     BOHEMIAN = "bohhemian"
-#     COLOURFUL = "colourful"
-#     STREETWEAR = "streetwear"
-#     CLASSY = "classy"
-
 # Define warm and cool colors
 WARM_COLORS = ["Red", "Red-Orange", "Orange", "Yellow-Orange", "Yellow"]
 COOL_COLORS = ["Yellow-Green", "Green", "Blue-Green", "Blue", "Blue-Purple", "Purple", "Red-Purple"]
@@ -128,11 +114,13 @@ def encode_image_to_base64(image_path):
 def compute_similarity(item1, item2):
         score = 0
         if item1["Colors"] == item2["Colors"]:
-            score += 1
+            score -= 2
         if item1["Main Category"] == item2["Main Category"]:
             score += 1
         if item1["Subcategory"] == item2["Subcategory"]:
             score += 1
+        if item1["Brands"] == item2["Brands"]:
+            score -= 2
         overlapping_seasons = set(item1["Season"]).intersection(set(item2["Season"]))
         score += len(overlapping_seasons)
         return score
@@ -305,7 +293,7 @@ X_test_sample_scaled = scaler.transform(X_test_sample)
 model_sample = LinearRegression().fit(X_train_sample_scaled, y_train_sample)
 
 
-def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profile="Complementary", color_temp=None, config_class=config):
+def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profile="Complementary", color_temp=None, config_class=config, excluded_accessories=["headband"], num_accessories=3):
     base_categories = list(config_class.base_category_constraints.keys())
 
     reference_subcategory = reference_item["Subcategory"]
@@ -317,6 +305,7 @@ def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profil
 
     base_items = get_top_similar_items_regression_fixed_with_constraints(reference_item, df, base_categories, compute_advanced_similarity_v3_updated, gender)
     accessory_items = df[(df["Main Category"] == "Accessories") & ((df["Gender"].str.lower() == gender.lower()) | (df["Gender"].str.lower() == "any") | df["Gender"].isnull())].to_dict(orient="records")
+    accessory_items = [item for item in accessory_items if item["Subcategory"] not in excluded_accessories]
 
     for category, items in base_items.items():
         # Sort the top 10 items 
@@ -351,7 +340,7 @@ def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profil
         if reference_main_category and reference_main_category in base_categories:
             base.insert(base_categories.index(reference_main_category), generate_url(reference_item["Product ID"]))
 
-        chosen_accessories = random.sample(accessory_items, min(4, len(accessory_items)))
+        chosen_accessories = random.sample(accessory_items, min(num_accessories, len(accessory_items)))
         unique_subcategories = set()
         final_accessories = []
         for accessory in chosen_accessories:
@@ -452,7 +441,7 @@ class Generator():
     
     # Generate outfits allow the user to select presets 
     
-    def start_genertation_html(categoryName, preset= "bohemian", gender = "Women"):
+    def start_genertation_html(categoryName, preset, gender = "Women"):
         general_preset = presets
         if gender == "Women" :
             if preset == "normal":
@@ -479,7 +468,7 @@ class Generator():
                 reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
                 reference_item_title = reference_item["Product Title"]
                 outfit_combinations_regression_v5_urls = generate_outfits_regression_v6_urls(reference_item, df, "Women",config_class= general_preset.WomensRomanticConfig)
-        elif preset == "Men" : 
+        elif gender == "Men" : 
             if preset == "normal":
                 reference_item = df[df["Subcategory"].str.contains(categoryName, case=False, na=False)].sample(n=1).iloc[0]
                 reference_item_title = reference_item["Product Title"]
@@ -509,9 +498,10 @@ class Generator():
 
         image_tag_template = '<img src="{}" style="object-fit: contain; width: 400px; height: 400px; margin: 5px;">'
         outfit_divs = ""
+        outfit_id = 1  # Initialize outfit ID
 
         for outfit in outfit_combinations_regression_v5_urls:
-            outfit_divs += f'<div class="outfit-combination"><h2>{reference_item_title}</h2>'
+            outfit_divs += f'<div class="outfit-combination" id="outfit-{outfit_id}"><h2>Outfit ID: {outfit_id}</h2><h3>{reference_item_title}</h3>'
             for i in range(3):  # 3 rows
                 outfit_divs += '<div class="outfit-row">'
                 for j in range(3):  # 3 columns
@@ -519,6 +509,7 @@ class Generator():
                         outfit_divs += image_tag_template.replace("{}", outfit[i * 3 + j])
                 outfit_divs += '</div>'
             outfit_divs += '</div>'
+            outfit_id += 1  # Increment the outfit ID
 
         html_template = f"""
     <html>

@@ -55,7 +55,7 @@ Accessories_Socks_Green,recWnlm7G7JapYBMn,Accessories,Socks,Green,Single-coloure
 Accessories_Caps_Red,recwPXQoMsWCuk2BU,Accessories,Caps,Red,Single-coloured,"Spring, Summer, Winter, Autumn",CAPS,Men
 Accessories_Hats_White,recDL6eNxdjYc291X,Accessories,Hats,White,Single-coloured,"Spring, Summer, Winter, Autumn",CAPS,Men
 Accessories_Bags_White,recoOervcCTR8SSnU,Accessories,Bags,White,Single-coloured,"Spring, Summer, Winter, Autumn",Johnny Urban,Men
-Accessories_Beanie_Black,rec1JZI34BKMq1Vw3,Accessories,Beanie,Black,Single-coloured,"Winter, Autumn",CAPS,Men
+Accessories_Beanie_Black,rec1JZI34BKMq1Vw3,Accessories,Caps,Black,Single-coloured,"Winter, Autumn",CAPS,Men
 Accessories_Bags_Black,recDGCLoO6sQVerF8,Accessories,Bags,Black,Single-coloured,"Spring, Summer, Winter, Autumn",Bellroy,Men
 Accessories_Socks_White,recC4XtrXO0BqzjNV,Accessories,Socks,White,Single-coloured,"Spring, Winter, Autumn",Colorful Standard,Men
 Accessories_Jewellery_Silver,recktd5rEgsEj2dzS,Accessories,Jewellery,Silver,Single-coloured,"Spring, Summer, Winter, Autumn",Asteria,Men
@@ -119,7 +119,7 @@ Accessories_Bags_Black,recFGV2hdM261sQu2,Accessories,Bags,Black,Single-coloured,
 Accessories_Eyewear_Brown,rec1Y5Ssg5Xh1Lk4J,Accessories,Eyewear,Brown,Single-coloured,"Spring, Summer, Winter, Autumn",Gucci,Men
 "Accessories_headband_Green, White",recG8ElpanrM7o723,Accessories,headband,"Green, White",Other,"Spring, Summer",Supreme,Men
 "Accessories_Scarves_Black, White",recxuQWEJdTHSPqQu,Accessories,Scarves,"Black, White",Floral,"Spring, Summer",ZARA,Men
-Accessories_Hats_Green,recfst0IdCXj1Pdbt,Accessories,Hats,Green,Single-coloured,"Spring, Summer, Autumn",ZARA,Men
+Accessories_Hats_Green,recfst0IdCXj1Pdbt,Accessories,Caps,Green,Single-coloured,"Spring, Summer, Autumn",ZARA,Men
 Accessories_Belts_Black,recbgv6rRD3dLTFzE,Accessories,Belts,Black,Single-coloured,"Winter, Autumn, Spring, Summer",ZARA,Men
 Accessories_Bags_Black,recbJzTDCXC6U9Y0O,Accessories,Bags,Black,Single-coloured,"Summer, Spring, Autumn, Winter",Urban Outfitters,Men
 "Accessories_Caps_White, Black",rec3l9UOXp7eH4Mdv,Accessories,Caps,"White, Black",Other,"Spring, Summer, Autumn, Winter",47 Brand,Men
@@ -156,18 +156,18 @@ Accessories_Bags_Brown,recC5WWyOJKk8Tsgc,Accessories,Bags,Brown,N.a.,"Winter, Au
 Accessories_Socks_Beige,rec71d9tGTavZVqYQ,Accessories,Socks,Beige,N.a.,"Winter, Autumn, Spring, Summer",Polo Club,Any
 Accessories_Socks_Blue,reczuEHHQfCfnvkQu,Accessories,Socks,Blue,Single-coloured,"Winter, Autumn, Spring, Summer",Polo Ralph Lauren,Any
 "Accessories_Jewellery_Silver, Blue",recAKe0guznRw88xg,Accessories,Jewellery,"Silver, Blue",N.a.,"Winter, Autumn, Spring, Summer",Burberry,Any
-Dresses_n.a._Purple,recnuALY9odC6lH13,Dresses,n.a.,Purple,Single-coloured,"Summer, Spring",My Jewellery,Women
-Dresses_n.a._Blue,rec5tPW18B2uN94dL,Dresses,n.a.,Blue,Single-coloured,Summer,Cider,Women
-Dresses_n.a._Green,reckGIVtbP5IkXJpJ,Dresses,n.a.,Green,Single-coloured,Summer,Maje Rome,Women
-Dresses_n.a._Yellow,rec0GHE6k1a4Eve4o,Dresses,n.a.,Yellow,Single-coloured,Summer,Mango,Women
-"Dresses_n.a._Yellow, White, Brown",recffACzP3Bz9Ur5t,Dresses,n.a.,"Yellow, White, Brown",Animal print,Summer,Mango,Women
-"Dresses_n.a._Green, Yellow",recVhodwgV7sGPkrp,Dresses,n.a.,"Green, Yellow",Floral,"Spring, Summer",Mango,Women
-"Dresses_n.a._Green, White",recMJggwxuSpCfVhT,Dresses,n.a.,"Green, White",Floral,Summer,Monsoon,Women
-"Dresses_n.a._Blue, White, Red",recjDHh108705XBic,Dresses,n.a.,"Blue, White, Red",Dots,"Summer, Spring",Monsoon,Women
-"Dresses_n.a._Red, Green, Brown, Blue",recAcy4dopCjIH8dv,Dresses,n.a.,"Red, Green, Brown, Blue",Floral,"Spring, Summer",Zimmerman,Women
-Dresses_n.a._Red,recotdMdUrimqpPts,Dresses,n.a.,Red,Single-coloured,Summer,ZARA,Women
-"Dresses_n.a._Orange, Yellow, Pink",recehvTRIGVzC0l5T,Dresses,n.a.,"Orange, Yellow, Pink",Floral,Summer,ZARA,Women
-Dresses_n.a._Blue,reciQB5gb3XEq4Ag1,Dresses,n.a.,Blue,Single-coloured,Summer,ZARA,Women
+Dresses_n.a._Purple,recnuALY9odC6lH13,Dresses,Dresses,Purple,Single-coloured,"Summer, Spring",My Jewellery,Women
+Dresses_n.a._Blue,rec5tPW18B2uN94dL,Dresses,Dresses,Blue,Single-coloured,Summer,Cider,Women
+Dresses_n.a._Green,reckGIVtbP5IkXJpJ,Dresses,Dresses,Green,Single-coloured,Summer,Maje Rome,Women
+Dresses_n.a._Yellow,rec0GHE6k1a4Eve4o,Dresses,Dresses,Yellow,Single-coloured,Summer,Mango,Women
+"Dresses_n.a._Yellow, White, Brown",recffACzP3Bz9Ur5t,Dresses,Dresses,"Yellow, White, Brown",Animal print,Summer,Mango,Women
+"Dresses_n.a._Green, Yellow",recVhodwgV7sGPkrp,Dresses,Dresses,"Green, Yellow",Floral,"Spring, Summer",Mango,Women
+"Dresses_n.a._Green, White",recMJggwxuSpCfVhT,Dresses,Dresses,"Green, White",Floral,Summer,Monsoon,Women
+"Dresses_n.a._Blue, White, Red",recjDHh108705XBic,Dresses,Dresses,"Blue, White, Red",Dots,"Summer, Spring",Monsoon,Women
+"Dresses_n.a._Red, Green, Brown, Blue",recAcy4dopCjIH8dv,Dresses,Dresses,"Red, Green, Brown, Blue",Floral,"Spring, Summer",Zimmerman,Women
+Dresses_n.a._Red,recotdMdUrimqpPts,Dresses,Dresses,Red,Single-coloured,Summer,ZARA,Women
+"Dresses_n.a._Orange, Yellow, Pink",recehvTRIGVzC0l5T,Dresses,Dresses,"Orange, Yellow, Pink",Floral,Summer,ZARA,Women
+Dresses_n.a._Blue,reciQB5gb3XEq4Ag1,Dresses,Dresses,Blue,Single-coloured,Summer,ZARA,Women
 Trousers_Jeans_Blue,recCZr5VNhZA3gLO1,Trousers,Jeans,Blue,Single-coloured,"Spring, Summer, Winter, Autumn",Samsoe and Samsoe,Women
 Trousers_Trousers_White,recNNwF0ftz4iZ0ji,Trousers,Trousers,White,Single-coloured,"Spring, Summer, Autumn",Samsoe and Samsoe,Women
 Trousers_Trousers_Orange,rec0KKUoLEj3BSf8O,Trousers,Trousers,Orange,Floral,"Spring, Summer, Autumn",Object,Women

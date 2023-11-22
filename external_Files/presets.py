@@ -317,8 +317,7 @@ class ClassyConfig(GenerateOutfitsConfig):
     # Base Category Constraints
 
     base_category_constraints = {
-        "tops": ["polo", "shirts", "jumpsuits", "sweaters","hoodie","blouses"],
-        "trousers": ["pants", "trousers", ],
+        "tops": ["dresses"],
         "shoes": ["boots", "heels"]
     }
     

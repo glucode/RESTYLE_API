@@ -87,7 +87,8 @@ def generate_with_image(): #handle potential of no images
 def generate_html_list():
     name = request.args.get('name')
     style = request.args.get('style')
-    output = generator.Generator.start_genertation_html(categoryName=name, preset=style)
+    gender = request.args.get('gender')
+    output = generator.Generator.start_genertation_html(categoryName=name, preset=style, gender=gender)
     return output,200
 
 

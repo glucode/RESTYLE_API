@@ -62,10 +62,10 @@ class URLClothingIdentifier():
 
 
 
-test_url = "https://galxboy.co.za/cdn/shop/products/image_5a6175ae-ac6f-4925-b349-74131c8be9d8.jpg?v=1694776300"  
+# test_url = "https://galxboy.co.za/cdn/shop/products/image_5a6175ae-ac6f-4925-b349-74131c8be9d8.jpg?v=1694776300"  
 
-try:
-    result = URLClothingIdentifier.identify_from_url(test_url)
-    print(f"Predicted class for the image: {result}")
-except Exception as e:
-    print(f"An error occurred: {e}")
+# try:
+#     result = URLClothingIdentifier.identify_from_url(test_url)
+#     print(f"Predicted class for the image: {result}")
+# except Exception as e:
+#     print(f"An error occurred: {e}")
