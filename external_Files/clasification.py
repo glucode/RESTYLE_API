@@ -62,10 +62,11 @@ class URLClothingIdentifier():
 
 
 
-# test_url = "https://galxboy.co.za/cdn/shop/products/image_5a6175ae-ac6f-4925-b349-74131c8be9d8.jpg?v=1694776300"  
+test_url = "https://firebasestorage.googleapis.com/v0/b/restyle-fbd67.appspot.com/o/catalogue%2FV2%2Frec0KKUoLEj3BSf8O.png"  
 
-# try:
-#     result = URLClothingIdentifier.identify_from_url(test_url)
-#     print(f"Predicted class for the image: {result}")
-# except Exception as e:
-#     print(f"An error occurred: {e}")
+try:
+    result = URLClothingIdentifier.identify_from_url(test_url)
+    print(f"Predicted class for the image: {result}")
+except Exception as e:
+    print(f"An error occurred: {e}")
+

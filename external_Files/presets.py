@@ -202,7 +202,7 @@ class StreetwearConfig(GenerateOutfitsConfig):
     base_category_constraints = {
         "tops": ["t-shirt", "shirts", "jumpsuits", "vests", "sweaters","hoodie", "sweatshirts"],
         "trousers": ["pants", "shorts", "denim", "jeans"],
-        "shoes": ["slides", "trainers", "boots", "sandals", "heels", "slip-ons"]
+        "shoes": ["slides", "trainers", "sandals", "heels", "slip-ons"]
     }
     
     # Other configurations
@@ -251,9 +251,9 @@ class WomensRomanticConfig(GenerateOutfitsConfig):
     # Base Category Constraints
 
     base_category_constraints = {
-        "tops": ["t-shirt", "shirts", "vests", "blouses"],
-        "trousers": ["pants", "shorts", "denim", "jeans"],
-        "shoes": ["slides", "trainers", "boots", "sandals", "heels", "slip-ons"]
+        "tops": ["Dresses"],
+        # "trousers": ["pants", "shorts", "denim", "jeans"],
+        "shoes": ["heels"]
     }
     
     # Other configurations
@@ -317,7 +317,8 @@ class ClassyConfig(GenerateOutfitsConfig):
     # Base Category Constraints
 
     base_category_constraints = {
-        "tops": ["dresses"],
+        "tops": ["polo","cardigans"],
+        "trousers": ["trousers", "skrits"],
         "shoes": ["boots", "heels"]
     }
     
@@ -479,9 +480,9 @@ class MenClassyConfig(GenerateOutfitsConfig):
     
     # Base Category Constraints
     base_category_constraints = {
-        "tops": ["t-shirt", "shirts", "polo", "vests", "sweaters"],
+        "tops": ["shirts", "polo", "sweaters"],
         "trousers": ["trousers", "pants"],
-        "shoes": ["trainers", "boots"]
+        "shoes": ["boots"]
     }
     
     # Other configurations

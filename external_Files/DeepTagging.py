@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from torchvision.transforms import ToTensor, ToPILImage
 import json
 
-IMAGE_PATH = "524749df-7a09-4a0b-be8b-adedc11139cc.jpg"
+IMAGE_PATH = "Screenshot 2023-11-23 at 12.16.44.png"
 
 # This is the order of the categories list. NO NOT CHANGE. Just for visualization purposes
 cats = ['shirt, blouse', 'top, t-shirt, sweatshirt', 'sweater', 'cardigan', 'jacket', 'vest', 'pants', 'shorts', 'skirt', 'coat', 'dress', 'jumpsuit', 'cape', 'glasses', 'hat', 'headband, head covering, hair accessory', 'tie', 'glove', 'watch', 'belt', 'leg warmer', 'tights, stockings', 'sock', 'shoe', 'bag, wallet', 'scarf', 'umbrella', 'hood', 'collar', 'lapel', 'epaulette', 'sleeve', 'pocket', 'neckline', 'buckle', 'zipper', 'applique', 'bead', 'bow', 'flower', 'fringe', 'ribbon', 'rivet', 'ruffle', 'sequin', 'tassel']

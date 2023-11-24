@@ -86,7 +86,7 @@ Accessories_Eyewear_Brown,recJZu3Tfy3i4qs5a,Accessories,Eyewear,Brown,Floral,"Sp
 Accessories_Eyewear_Black,recvXRToxetrZjz7w,Accessories,Eyewear,Black,Single-coloured,"Spring, Winter, Summer, Autumn",Chimi,Women
 "Accessories_Eyewear_Beige, Black",recBzxdsv2vFSAhPu,Accessories,Eyewear,"Beige, Black",Single-coloured,"Spring, Winter, Summer, Autumn",Kapten & Son,Women
 Accessories_Caps_White,recn4Rs2aM1LQHHh9,Accessories,Caps,White,Single-coloured,"Spring, Winter, Summer, Autumn",bpc,Women
-Accessories_Caps_Beige,recWSOJqSVbBLGg4K,Accessories,Caps,Beige,Single-coloured,"Spring, Winter, Summer, Autumn",Seeberger,Women
+Accessories_Caps_Beige,recWSOJqSVbBLGg4K,Accessories,Caps,Beige,Single-coloured,"Spring, Summer, Autumn",Seeberger,Women
 "Accessories_Caps_Black, Red, Beige",recbxEBPq7kUWJ7P1,Accessories,Caps,"Black, Red, Beige",Single-coloured,"Spring, Winter, Summer, Autumn",Temu,Women
 Accessories_Belts_Black,reccCE5mPkTbxdCvW,Accessories,Belts,Black,Single-coloured,"Spring, Winter, Summer, Autumn",Hermes,Women
 Accessories_Belts_Black,reccRU8WLD0NPd1L1,Accessories,Belts,Black,Single-coloured,"Spring, Winter, Summer, Autumn",Celine,Women
@@ -252,7 +252,7 @@ Trousers_Jeans_Blue,rec6FjMVA3lGrb9wj,Trousers,Jeans,Blue,Dots,"Spring, Winter, 
 "Trousers_Jeans_Blue, Beige",recErFdXogWnDWK5o,Trousers,Jeans,"Blue, Beige",Geometric,"Spring, Winter, Summer, Autumn",Levi's,Women
 "Trousers_Jeans_White, Pink",recRSE3xNYymbHHp7,Trousers,Jeans,"White, Pink",Dots,"Spring, Winter, Summer, Autumn",Cider,Women
 "Trousers_Jeans_Blue, White",recSpXGJmSBmKvT0z,Trousers,Jeans,"Blue, White",Geometric,"Spring, Winter, Summer, Autumn",The Ragged Priest,Women
-"Trousers_Jeans_Blue, White",receOVpXVgl1Su6MJ,Trousers,Jeans,"Blue, White",Single-coloured,"Spring, Winter, Summer, Autumn",Diesel,Women
+"Trousers_Jeans_Blue, White",receOVpXVgl1Su6MJ,Trousers,Jeans,"Blue, White",Single-coloured,"Winter, Autumn",Diesel,Women
 "Trousers_Jeans_Black, Red",recAoErFvJeY4vu9d,Trousers,Jeans,"Black, Red",Floral,"Spring, Winter, Summer, Autumn", Buffalo,Women
 "Trousers_Jeans_Blue, Pink",recbkkbYMLbTUOLbs,Trousers,Jeans,"Blue, Pink",Geometric,"Spring, Winter, Summer, Autumn",Marni,Women
 "Trousers_Jeans_Blue, Beige, Brown",recMVTCjvaJJLUQTy,Trousers,Jeans,"Blue, Beige, Brown",Geometric,"Spring, Winter, Summer, Autumn",Cider,Women
@@ -462,7 +462,7 @@ Trousers_Shorts_Yellow,recuZz8zIkI75Nbcf,Trousers,Shorts,Yellow,Pinstripe,Summer
 Trousers_Shorts_Red,recpHEuUaGq5hrE2s,Trousers,Shorts,Red,Single-coloured,Summer,Polo Ralph Lauren,Men
 "Trousers_Trousers_Orange, Green, Beige, Black",rec4rVNdXpooskQbk,Trousers,Trousers,"Orange, Green, Beige, Black",Floral,"Summer, Spring",Bambah,Women
 Shoes_Boots_Brown,recNz2D9VMH13hlkf,Shoes,Boots,Brown,Single-coloured,"Winter, Autumn",Ganni,Women
-Shoes_Sandals_Brown,reczNBWZcjVeaa5SU,Shoes,Sandals,Brown,Single-coloured,"Spring, Summer, Autumn",Vagabond,Women
+Shoes_Sandals_Brown,reczNBWZcjVeaa5SU,Shoes,Sandals,Brown,Single-coloured,"Spring",Vagabond,Women
 Shoes_Sandals_Beige,recMn9xHjkPn6bCbD,Shoes,Sandals,Beige,Single-coloured,"Autumn, Winter",Birkenstock,Women
 Shoes_Heels_Pink,recr4GSWFVkPNvuti,Shoes,Heels,Pink,Single-coloured,Summer,Reformation,Women
 Shoes_Trainers_White,recuRovOdHSCOaztZ,Shoes,Trainers,White,Single-coloured,"Spring, Summer, Winter, Autumn",Nike,Any
@@ -809,10 +809,10 @@ Tops_Shirts_Pink,reckr4BaPnpyquyy4,Tops,Shirts,Pink,Pinstripe,"Spring, Winter, A
 Tops_Shirts_White,recKjz9gotVSJ8NPy,Tops,Shirts,White,Single-coloured,"Spring, Winter, Autumn",Seidensticker,Women
 Tops_Shirts_Brown,recXfjJ0gxTCLvlSb,Tops,Shirts,Brown,Single-coloured,"Spring, Winter, Autumn",Maxmara,Women
 Tops_Shirts_Beige,reczRfcxqfOpBrUHk,Tops,Shirts,Beige,Single-coloured,"Spring, Winter, Autumn",Maxmara,Women
-"Tops_Shirts_Beige, Red, Orange",recTEIjOgkFiWcjcc,Tops,Shirts,"Beige, Red, Orange",Floral,"Spring, Winter, Summer, Autumn",&Other Stories,Women
-"Tops_Shirts_Beige, Red",recWld11OQcGcnWqL,Tops,Shirts,"Beige, Red",Floral,"Spring, Winter, Summer, Autumn",&Other Stories,Women
-Tops_Shirts_Beige,recHRhEeKfxwTYuis,Tops,Shirts,Beige,Floral,"Spring, Winter, Summer, Autumn",Cider,Women
-Tops_Shirts_Brown,recdVOH3ZWQdX83m8,Tops,Shirts,Brown,Single-coloured,"Spring, Winter, Summer, Autumn",Mango,Women
+"Tops_Shirts_Beige, Red, Orange",recTEIjOgkFiWcjcc,Tops,Shirts, "Orange",Floral,"Spring, Summer",&Other Stories,Women
+"Tops_Shirts_Beige, Red",recWld11OQcGcnWqL,Tops,Shirts,"Beige, Red",Floral,"Spring, Summer",&Other Stories,Women
+Tops_Shirts_Beige,recHRhEeKfxwTYuis,Tops,Shirts,Beige,Floral,"Spring, Summer",Cider,Women
+Tops_Shirts_Brown,recdVOH3ZWQdX83m8,Tops,Shirts,Brown,Single-coloured,"Spring",Mango,Women
 Tops_Sweatshirts_White,recYD3C20rxNTRx0u,Tops,Sweatshirts,White,Single-coloured,"Winter, Autumn",Only,Women
 Tops_Sweatshirts_White,recuVdVkA7hSmxYMf,Tops,Sweatshirts,White,Single-coloured,"Winter, Autumn",Mango,Women
 Tops_Sweatshirts_White,recHCUrY5VPnJHxI3,Tops,Sweatshirts,White,Single-coloured,"Winter, Autumn",Zaful,Women

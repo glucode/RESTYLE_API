@@ -151,7 +151,7 @@ def compute_compatability(item1, item2):
 
     # Other attribute comparisons
     if item1["Main Category"] == item2["Main Category"]:
-        score += 1
+        score += 3
     if item1["Subcategory"] == item2["Subcategory"]:
         score += 1
     if item1["Brands"] == item2["Brands"]:
@@ -173,6 +173,24 @@ def determine_current_season():
         return "Autumn"
     
 def get_top_similar_items_regression_fixed_with_constraints(reference_item, df, categories, similarity_function, gender,config_class=config,top_n=5):
+    """
+    Finds top similar items to a given reference item in a dataset. The function selects items based on specified 
+    categories and gender. It uses a similarity function and linear regression model predictions to rank items 
+    by similarity.
+
+    Parameters:
+    - reference_item (dict): The item to which others are compared.
+    - df (DataFrame): Dataset containing fashion items.
+    - categories (list): Categories to filter items.
+    - similarity_function (function): Used to calculate similarity between items.
+    - gender (str): Gender filter for items.
+    - config_class (object): Provides category constraints.
+    - top_n (int): Number of items to return per category.
+
+    Returns:
+    - dict: Categories with their top 'n' similar items.
+    """
+    # Fun begins 
     category_items = {}
     for category, subcategories in config_class.base_category_constraints.items():
         # Check if the current category is in the categories list
@@ -225,7 +243,7 @@ def generate_outfits_with_user_item(refrence_category,user_image_file, df, gende
     reference_item = {"Product ID": refrence_category, "Image Path": user_item_path}  
     
     base_categories = ["tops", "trousers", "shoes"]
-    accessory_categories = ["jewellery", "bags", "caps", "belts", "socks", "bracelets", "eyewear"]
+    accessory_categories = ["jewellery", "bags", "caps", "belts", "bracelets", "eyewear"]
 
     base_items = get_top_similar_items_regression_fixed(refrence_category, df, base_categories, compute_advanced_similarity_v3_updated)
     accessory_items = get_top_similar_items_regression_fixed(refrence_category, df, accessory_categories, compute_advanced_similarity_v3_updated)
@@ -297,8 +315,15 @@ def compute_advanced_similarity_v3_updated(item1, item2):
     return score
     
 def get_feature_difference(item1, item2):
-    color_diff = int(item1["Colors"] != item2["Colors"])
-    main_category_diff = int(item1["Main Category"] != item2["Main Category"])
+    color_diff = 0
+    main_category_diff = 0
+    subcategory_diff = 0
+    overlapping_seasons = 0
+    
+    if item1["Colors"] == item2["Colors"]:
+        color_diff = -2
+    if item1["Main Category"] != item2["Main Category"]:
+        main_category_diff = 3
     subcategory_diff = int(item1["Subcategory"] != item2["Subcategory"])
     overlapping_seasons = len(set(item1["Season"]).intersection(set(item2["Season"])))
     return [color_diff, main_category_diff, subcategory_diff, overlapping_seasons]
@@ -318,7 +343,7 @@ for idx1, item1 in sample_df.iterrows():
             y_sample.append(similarity_score)
 
 # Splitting the dataset 
-X_train_sample, X_test_sample, y_train_sample, y_test_sample = train_test_split(X_sample, y_sample, test_size=0.2, random_state=42)
+X_train_sample, X_test_sample, y_train_sample, y_test_sample = train_test_split(X_sample, y_sample, test_size=0.4, random_state=12)
 
 # Normalizing/
 scaler = StandardScaler()
@@ -329,7 +354,7 @@ X_test_sample_scaled = scaler.transform(X_test_sample)
 model_sample = LinearRegression().fit(X_train_sample_scaled, y_train_sample)
 
 
-def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profile="Complementary", color_temp=None, config_class=config, excluded_accessories=["headband"], num_accessories=3):
+def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profile="Complementary", color_temp=None, config_class=config, excluded_accessories=["headband","Socks","Sock", "Caps", "beenie","bags"], num_accessories=3):
     base_categories = list(config_class.base_category_constraints.keys())
 
     reference_subcategory = reference_item["Subcategory"]
