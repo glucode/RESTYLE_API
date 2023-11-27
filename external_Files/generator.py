@@ -350,8 +350,14 @@ scaler = StandardScaler()
 X_train_sample_scaled = scaler.fit_transform(X_train_sample)
 X_test_sample_scaled = scaler.transform(X_test_sample)
 
-
 model_sample = LinearRegression().fit(X_train_sample_scaled, y_train_sample)
+
+y_pred_sample = model_sample.predict(X_test_sample_scaled)
+
+# Calculating Mean Squared Error
+mse = mean_squared_error(y_test_sample, y_pred_sample)
+
+print(f"Mean Squared Error: {mse}")
 
 
 def generate_outfits_regression_v6_urls(reference_item, df, gender, color_profile="Complementary", color_temp=None, config_class=config, excluded_accessories=["headband","Socks","Sock", "Caps", "beenie","bags"], num_accessories=3):
