@@ -350,7 +350,7 @@ scaler = StandardScaler()
 X_train_sample_scaled = scaler.fit_transform(X_train_sample)
 X_test_sample_scaled = scaler.transform(X_test_sample)
 
-model_sample = LinearRegression().fit(X_train_sample_scaled, y_train_sample)
+model_sample = LinearRegression().fit(X_train_sample_scaled, y_train_sample,sample_weight=0.07)
 
 y_pred_sample = model_sample.predict(X_test_sample_scaled)
 
